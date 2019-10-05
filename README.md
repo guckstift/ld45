@@ -6,3 +6,6 @@ Work in Progress...
 
 Play it here:
 https://guckstift.github.io/ld45/
+
+![Work in Progress](doc/wip1.jpg)
+
