@@ -11,6 +11,8 @@ body {
 	width: 512px;
 	height: 512px;
 	overflow: hidden;
+	background: #123;
+	border-radius: 8px;
 }
 
 #world {
@@ -83,6 +85,13 @@ body {
 
 .tree {
 	background: url("../gfx/tree.png");
+	width: 32px;
+	height: 48px;
+	margin-top: -16px;
+}
+
+.rock {
+	background: url("../gfx/rock.png");
 	width: 32px;
 	height: 48px;
 	margin-top: -16px;

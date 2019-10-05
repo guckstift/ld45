@@ -1,43 +1,56 @@
 let terras = ["grass", "soil", "stone", "sand", "water"];
 let mapSize = 64;
 let tileSize = 32;
+let moveLock = false;
 
-world.offsX = 0;
-world.offsY = 0;
+onload = init;
+onkeydown = keyDown;
 
-onload = e => {
+function init()
+{
+	world.offsX = 0;
+	world.offsY = 0;
+
+	for(let y=0; y<mapSize; y++) {
+		let row = newElm("row nodisplay");
+		row.style.top = y * tileSize + "px";
+		
+		for(let x=0; x<mapSize; x++) {
+			let terra = randChoice(terras);
+			let tile = newElm("tile nodisplay invis " + terra);
+			tile.style.left = x * tileSize + "px";
+			tile.terra = terra;
+			row.append(tile);
+			
+			if(tile.terra === "grass" && randInt(2) === 0) {
+				let tree = newElm("sprite nodisplay invis tree");
+				tile.obj = tree;
+				setSpritePos(tree, x, y);
+				world.append(tree);
+			}
+			
+			if(tile.terra === "stone" && randInt(2) === 0) {
+				let tree = newElm("sprite nodisplay invis rock");
+				tile.obj = tree;
+				setSpritePos(tree, x, y);
+				world.append(tree);
+			}
+		}
+		
+		ground.append(row);
+	}
+	
 	initChar();
-};
+	centerToChar();
+	requestAnimationFrame(frame);
+}
 
-onkeydown = e => {
+function keyDown(e)
+{
 	if(e.key.startsWith("Arrow")) {
 		moveChar(e.key);
 	}
-};
-
-for(let y=0; y<mapSize; y++) {
-	let row = newElm("row nodisplay");
-	row.style.top = y * tileSize + "px";
-	
-	for(let x=0; x<mapSize; x++) {
-		let terra = randChoice(terras);
-		let tile = newElm("tile nodisplay invis " + terra);
-		tile.style.left = x * tileSize + "px";
-		tile.terra = terra;
-		row.append(tile);
-		
-		if(tile.terra === "grass" && randInt(2) === 0) {
-			let tree = newElm("sprite nodisplay invis tree");
-			tile.obj = tree;
-			setSpritePos(tree, x, y);
-			world.append(tree);
-		}
-	}
-	
-	ground.append(row);
 }
-
-requestAnimationFrame(frame);
 
 function frame()
 {
@@ -128,6 +141,16 @@ function setChar(x, y)
 	}
 }
 
+function centerToChar()
+{
+	let charRect = char.getBoundingClientRect();
+	world.offsX = char.xpx - 256;
+	world.offsY = char.ypx - 256;
+	world.style.left = -world.offsX + "px";
+	world.style.top = -world.offsY + "px";
+	updateCullRows();
+}
+
 function scrollToChar()
 {
 	let charRect = char.getBoundingClientRect();
@@ -170,20 +193,25 @@ function scrollToChar()
 	}
 	
 	if(ymove) {
-		for(let y=0; y<mapSize; y++) {
-			let firsty = Math.floor(world.offsY / tileSize);
-			let row = getRow(y);
-			
-			if(row) {
-				if(y > firsty && y < firsty + 16) {
-					if(row.classList.contains("nodisplay")) {
-						row.classList.remove("nodisplay");
-					}
+		updateCullRows();
+	}
+}
+
+function updateCullRows()
+{
+	for(let y=0; y<mapSize; y++) {
+		let firsty = Math.floor(world.offsY / tileSize);
+		let row = getRow(y);
+		
+		if(row) {
+			if(y >= firsty && y <= firsty + 16) {
+				if(row.classList.contains("nodisplay")) {
+					row.classList.remove("nodisplay");
 				}
-				else {
-					if(!row.classList.contains("nodisplay")) {
-						row.classList.add("nodisplay");
-					}
+			}
+			else {
+				if(!row.classList.contains("nodisplay")) {
+					row.classList.add("nodisplay");
 				}
 			}
 		}
@@ -224,6 +252,12 @@ function moveChar(dir)
 		return;
 	}
 	
+	if(moveLock) {
+		return;
+	}
+	
+	moveLock = true;
+	setTimeout(() => moveLock = false, 125);
 	
 	if(tile.terra !== "water") {
 		setChar(x, y);
