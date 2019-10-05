@@ -2,6 +2,9 @@ let terras = ["grass", "soil", "stone", "sand", "water"];
 let mapSize = 256;
 let tileSize = 32;
 
+world.offsX = 0;
+world.offsY = 0;
+
 onload = e => {
 	initChar();
 };
@@ -14,15 +17,17 @@ onkeydown = e => {
 
 for(let y=0; y<mapSize; y++) {
 	let row = newElm("row");
+	row.style.top = y * tileSize + "px";
 	
 	for(let x=0; x<mapSize; x++) {
 		let terra = randChoice(terras);
-		let tile = newElm("tile invis " + terra);
+		let tile = newElm("tile nodisplay invis " + terra);
+		tile.style.left = x * tileSize + "px";
 		tile.terra = terra;
 		row.append(tile);
 		
 		if(tile.terra === "grass" && randInt(2) === 0) {
-			let tree = newElm("sprite invis tree");
+			let tree = newElm("sprite nodisplay invis tree");
 			tile.obj = tree;
 			setSpritePos(tree, x, y);
 			world.append(tree);
@@ -40,7 +45,6 @@ function initChar()
 		let tile = getTile(x, y);
 		
 		if(walkable(tile)) {
-		//if(tile.terra !== "water") {
 			setChar(x, y);
 			break;
 		}
@@ -99,10 +103,15 @@ function setChar(x, y)
 	for(let dy=-1; dy<=+1; dy++) {
 		for(let dx=-1; dx<=+1; dx++) {
 			let tile = getTile(x + dx, y + dy);
-			tile && tile.classList.remove("invis");
+			tile && tile.classList.remove("nodisplay");
+			setTimeout(() => tile && tile.classList.remove("invis"));
 			tile && tile.obj && tile.obj.classList.remove("invis");
+			setTimeout(() => tile && tile.obj && tile.obj.classList.remove("nodisplay"));
 		}
 	}
+	
+	//let charRect = {
+	//};
 	
 	let charRect = char.getBoundingClientRect();
 	let viewRect = viewport.getBoundingClientRect();
@@ -111,25 +120,33 @@ function setChar(x, y)
 	delta = charRect.right - viewRect.right + tileSize;
 	
 	if(delta > 0) {
-		viewport.scrollLeft += delta;
+		world.offsX -= delta;
+		world.style.left = world.offsX + "px";
+		//viewport.scrollLeft += delta;
 	}
 	
 	delta = charRect.left - viewRect.left - tileSize;
 	
 	if(delta < 0) {
-		viewport.scrollLeft += delta;
+		world.offsX -= delta;
+		world.style.left = world.offsX + "px";
+		//viewport.scrollLeft += delta;
 	}
 	
 	delta = charRect.bottom - viewRect.bottom + tileSize;
 	
 	if(delta > 0) {
-		viewport.scrollTop += delta;
+		world.offsY -= delta;
+		world.style.top = world.offsY + "px";
+		//viewport.scrollTop += delta;
 	}
 	
 	delta = charRect.top - viewRect.top - tileSize;
 	
 	if(delta < 0) {
-		viewport.scrollTop += delta;
+		world.offsY -= delta;
+		world.style.top = world.offsY + "px";
+		//viewport.scrollTop += delta;
 	}
 }
 
@@ -164,7 +181,6 @@ function moveChar(dir)
 	let tile = getTile(x, y);
 	
 	if(!walkable(tile)) {
-	//if(posOutside(x, y)) {
 		return;
 	}
 	
