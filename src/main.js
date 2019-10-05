@@ -21,8 +21,8 @@ for(let y=0; y<mapSize; y++) {
 		tile.terra = terra;
 		row.append(tile);
 		
-		if(tile.terra === "grass") {
-			let tree = newElm("tree");
+		if(tile.terra === "grass" && randInt(2) === 0) {
+			let tree = newElm("sprite tree");
 			setSpritePos(tree, x, y);
 			world.append(tree);
 		}
@@ -85,6 +85,7 @@ function setSpritePos(sprite, x, y)
 	sprite.ypx = y * tileSize;
 	sprite.style.left = sprite.xpx + "px";
 	sprite.style.top = sprite.ypx + "px";
+	sprite.style.zIndex = 1000 + sprite.ypx;
 }
 
 function setChar(x, y)

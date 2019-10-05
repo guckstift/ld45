@@ -53,7 +53,13 @@ body {
 }
 
 
+.sprite {
+	position: absolute;
+}
+
+
 #char {
+	/*
 	box-sizing: border-box;
 	background: #fc9;
 	width: 16px;
@@ -64,10 +70,14 @@ body {
 	margin-left: 8px;
 	margin-top: 4px;
 	box-shadow: 4px 0px 8px black;
+	*/
+	background: url("../gfx/char.png");
+	width: 32px;
+	height: 48px;
+	margin-top: -16px;
 }
 
 .tree {
-	position: absolute;
 	background: url("../gfx/tree.png");
 	width: 32px;
 	height: 48px;
