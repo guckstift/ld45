@@ -1,6 +1,5 @@
 body {
 	background: black;
-	
 	display: flex;
 	justify-content: center;
 	align-items: center;
@@ -9,8 +8,8 @@ body {
 }
 
 #viewport {
-	width: 500px;
-	height: 500px;
+	width: 512px;
+	height: 512px;
 	overflow: hidden;
 }
 
@@ -29,6 +28,18 @@ body {
 	flex: none;
 	width: 32px;
 	height: 32px;
+	opacity: 1;
+	transition: opacity 0.5s;
+}
+
+.sprite {
+	position: absolute;
+	opacity: 1;
+	transition: opacity 0.5s;
+}
+
+.invis {
+	opacity: 0;
 }
 
 
@@ -53,28 +64,11 @@ body {
 }
 
 
-.sprite {
-	position: absolute;
-}
-
-
 #char {
-	/*
-	box-sizing: border-box;
-	background: #fc9;
-	width: 16px;
-	height: 28px;
-	border-radius: 8px;
-	border: 1px solid black;
-	position: absolute;
-	margin-left: 8px;
-	margin-top: 4px;
-	box-shadow: 4px 0px 8px black;
-	*/
 	background: url("../gfx/char.png");
 	width: 32px;
-	height: 48px;
-	margin-top: -16px;
+	height: 64px;
+	margin-top: -32px;
 }
 
 .tree {

@@ -1,5 +1,5 @@
 let terras = ["grass", "soil", "stone", "sand", "water"];
-let mapSize = 32;
+let mapSize = 256;
 let tileSize = 32;
 
 onload = e => {
@@ -17,12 +17,13 @@ for(let y=0; y<mapSize; y++) {
 	
 	for(let x=0; x<mapSize; x++) {
 		let terra = randChoice(terras);
-		let tile = newElm("tile " + terra);
+		let tile = newElm("tile invis " + terra);
 		tile.terra = terra;
 		row.append(tile);
 		
 		if(tile.terra === "grass" && randInt(2) === 0) {
-			let tree = newElm("sprite tree");
+			let tree = newElm("sprite invis tree");
+			tile.obj = tree;
 			setSpritePos(tree, x, y);
 			world.append(tree);
 		}
@@ -92,20 +93,49 @@ function setChar(x, y)
 {
 	setSpritePos(char, x, y);
 	
+	let tile;
+	tile = getTile(x, y);
+	tile && tile.classList.remove("invis");
+	tile && tile.obj && tile.obj.classList.remove("invis");
+	tile = getTile(x - 1, y);
+	tile && tile.classList.remove("invis");
+	tile && tile.obj && tile.obj.classList.remove("invis");
+	tile = getTile(x + 1, y);
+	tile && tile.classList.remove("invis");
+	tile && tile.obj && tile.obj.classList.remove("invis");
+	tile = getTile(x, y - 1);
+	tile && tile.classList.remove("invis");
+	tile && tile.obj && tile.obj.classList.remove("invis");
+	tile = getTile(x, y + 1);
+	tile && tile.classList.remove("invis");
+	tile && tile.obj && tile.obj.classList.remove("invis");
+	
 	let charRect = char.getBoundingClientRect();
 	let viewRect = viewport.getBoundingClientRect();
+	let delta;
 	
-	if(charRect.right - viewRect.right > 0) {
-		viewport.scrollLeft += charRect.right - viewRect.right;
+	delta = charRect.right - viewRect.right + tileSize;
+	
+	if(delta > 0) {
+		viewport.scrollLeft += delta;
 	}
-	if(charRect.left - viewRect.left < 0) {
-		viewport.scrollLeft += charRect.left - viewRect.left;
+	
+	delta = charRect.left - viewRect.left - tileSize;
+	
+	if(delta < 0) {
+		viewport.scrollLeft += delta;
 	}
-	if(charRect.bottom - viewRect.bottom > 0) {
-		viewport.scrollTop += charRect.bottom - viewRect.bottom;
+	
+	delta = charRect.bottom - viewRect.bottom + tileSize;
+	
+	if(delta > 0) {
+		viewport.scrollTop += delta;
 	}
-	if(charRect.top - viewRect.top < 0) {
-		viewport.scrollTop += charRect.top - viewRect.top;
+	
+	delta = charRect.top - viewRect.top - tileSize;
+	
+	if(delta < 0) {
+		viewport.scrollTop += delta;
 	}
 }
 
