@@ -1,0 +1,6 @@
+LD45 - Start with nothing
+
+* top down adventure where you start with nothing
+* tile based
+* game must be improved by the player by achieving stuff
+
