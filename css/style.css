@@ -8,6 +8,16 @@ body {
 }
 
 #viewport {
+}
+
+#canvas {
+	display: block;
+}
+
+
+/*
+
+#viewport {
 	width: 512px;
 	height: 512px;
 	overflow: hidden;
@@ -87,3 +97,4 @@ body {
 	height: 48px;
 	margin-top: -16px;
 }
+*/
