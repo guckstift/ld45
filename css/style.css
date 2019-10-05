@@ -21,6 +21,7 @@ body {
 	width: 64px;
     height: 512px;
     padding: 0 16px;
+	position: relative;
 }
 
 #world {
@@ -66,67 +67,25 @@ body {
 	opacity: 0;
 }
 
-
-.grass {
-	background: #3c0;
+.inv-item {
+	position: relative;
 }
 
-.soil {
-	background: #963;
+.durability {
+	position: absolute;
+	right: 0;
+	bottom: 0;
+	height: 4px;
+	width: 100%;
+	background: #0f0;
 }
 
-.stone {
-	background: #999;
-}
-
-.sand {
-	background: #ff9;
-}
-
-.water {
-	background: #36f;
-}
-
-
-#char {
-	background: url("../gfx/char.png");
-	width: 32px;
-	height: 64px;
-	margin-top: -32px;
-}
-
-.tree {
-	background: url("../gfx/tree.png");
-	width: 32px;
-	height: 48px;
-	margin-top: -16px;
-}
-
-.rock {
-	background: url("../gfx/rock.png");
-	width: 32px;
-	height: 48px;
-	margin-top: -16px;
-}
-
-.axe {
-	background-image: url("../gfx/axe.png");
+#toolCursor {
+	position: absolute;
 	width: 32px;
 	height: 32px;
-	background-size: 32px;
+	left: 0;
+	top: 0;
+	display: none;
+	z-index: 9999;
 }
-
-.axe.picking-up {
-	width: 128px;
-	height: 128px;
-	margin-left: -46px;
-	margin-top: -46px;
-	background-size: 128px;
-}
-
-.axe.inv-item {
-	width: 64px;
-	height: 64px;
-	background-size: 64px;
-}
-

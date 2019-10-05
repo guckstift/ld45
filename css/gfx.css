@@ -1,0 +1,63 @@
+.grass {
+	background: #3c0;
+}
+
+.soil {
+	background: #963;
+}
+
+.stone {
+	background: #999;
+}
+
+.sand {
+	background: #ff9;
+}
+
+.water {
+	background: #36f;
+}
+
+
+#char {
+	background: url("../gfx/char.png");
+	width: 32px;
+	height: 64px;
+	margin-top: -32px;
+}
+
+.tree {
+	background: url("../gfx/tree.png");
+	width: 32px;
+	height: 48px;
+	margin-top: -16px;
+}
+
+.rock {
+	background: url("../gfx/rock.png");
+	width: 32px;
+	height: 48px;
+	margin-top: -16px;
+}
+
+.axe {
+	background-image: url("../gfx/axe.png");
+	width: 32px;
+	height: 32px;
+	background-size: 32px;
+}
+
+.axe.picking-up {
+	width: 128px;
+	height: 128px;
+	margin-left: -46px;
+	margin-top: -46px;
+	background-size: 128px;
+}
+
+.axe.inv-item {
+	width: 64px;
+	height: 64px;
+	background-size: 64px;
+}
+

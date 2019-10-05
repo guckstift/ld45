@@ -3,7 +3,7 @@ let rndcnt = 0;
 let terras = ["grass", "soil", "stone", "sand", "water"];
 let mapSize = 64;
 let tileSize = 32;
-let radius = 8;
+let radius = 4;
 
 let moveLock = false;
 let continentTiles = [];
@@ -11,6 +11,8 @@ let tilesToFill = 0;
 
 onload = init;
 onkeydown = keyDown;
+onmousemove = mouseMove;
+onclick = click;
 
 function init()
 {
@@ -22,8 +24,6 @@ function init()
 		row.style.top = y * tileSize + "px";
 		
 		for(let x=0; x<mapSize; x++) {
-			//let prob = Math.floor(noise2d(x, y) * terras.length);
-			//let terra = terras[prob];
 			let terra = randChoice(terras);
 			let tile = newElm("tile nodisplay invis " + terra);
 			tile.x = x;
@@ -63,6 +63,7 @@ function addNewObject(type, tile, walkable = false)
 	}
 	
 	let obj = newElm("sprite " + dispCls + type);
+	obj.type = type;
 	obj.walkable = walkable;
 	//let tile = getTile(x, y);
 	tile.obj = obj;
@@ -72,8 +73,107 @@ function addNewObject(type, tile, walkable = false)
 
 function keyDown(e)
 {
-	if(e.key.startsWith("Arrow")) {
+	if(e.key.startsWith("Arrow") || ["w", "a", "s", "d"].includes(e.key)) {
 		moveChar(e.key);
+	}
+}
+
+function mouseMove(e)
+{
+	let [x, y] = [e.clientX, e.clientY];
+	
+	toolCursor.style.display = "";
+	
+	[[-1,0], [+1,0], [0,-1], [0,+1]].forEach(([dx, dy]) => {
+		if(testAdjacentPoint(x, y, dx, dy)) {
+			mouseOverAdj(char.x + dx, char.y + dy);
+		}
+	});
+}
+
+function click(e)
+{
+	let [x, y] = [e.clientX, e.clientY];
+	
+	setToolCursor();
+	
+	[[-1,0], [+1,0], [0,-1], [0,+1]].forEach(([dx, dy]) => {
+		if(testAdjacentPoint(x, y, dx, dy)) {
+			clickAdj(char.x + dx, char.y + dy);
+		}
+	});
+}
+
+function mouseOverAdj(x, y)
+{
+	let tile = getTile(x, y);
+	
+	if(tile.obj) {
+		let tool = getToolFor(tile.obj.type);
+		
+		if(tool) {
+			setToolCursor(tool, x, y);
+		}
+	}
+}
+
+function setToolCursor(tool, x, y)
+{
+	if(tool) {
+		let tile = getTile(x, y);
+		let type = tool.type.slice(5);
+		let rect = tile.getBoundingClientRect();
+		toolCursor.classList.remove(toolCursor.type);
+		toolCursor.type = type;
+		toolCursor.tool = tool;
+		toolCursor.classList.add(type);
+		toolCursor.style.left = rect.left + "px";
+		toolCursor.style.top = rect.top + "px";
+		toolCursor.style.display = "block";
+	}
+	else {
+		toolCursor.style.display = "";
+	}
+}
+
+function clickAdj(x, y)
+{
+	let tile = getTile(x, y);
+	
+	if(tile.obj) {
+		let tool = getToolFor(tile.obj.type);
+		
+		if(tool) {
+			useTool(tool, tile);
+		}
+	}
+}
+
+function testAdjacentPoint(px, py, dx, dy)
+{
+	let tile = getTile(char.x + dx, char.y + dy);
+	
+	if(tile) {
+		let rect = tile.getBoundingClientRect();
+		
+		if(pointInRect(px, py, rect)) {
+			return true;
+		}
+	}
+	
+	return false;
+}
+
+function getToolFor(objType)
+{
+	if(objType === "tree") {
+		for(let i=0; i<sidebar.children.length; i++) {
+			let item = sidebar.children[i];
+			
+			if(item.type === "item axe") {
+				return item;
+			}
+		}
 	}
 }
 
@@ -159,7 +259,32 @@ function pickupItem(obj)
 		obj.classList.remove("picking-up");
 		obj.classList.remove("sprite");
 		obj.classList.remove("item");
+		obj.durability = newElm("durability");
+		obj.durability.val = 2;
+		obj.durability.maxval = 2;
+		obj.style.left = "";
+		obj.style.top = "";
+		obj.append(obj.durability);
 	}, 250);
+}
+
+function useTool(obj, tile)
+{
+	let dur = obj.durability;
+	dur.val = Math.max(0, dur.val - 1);
+	let rel = dur.val / dur.maxval;
+	dur.style.width = rel * 100 + "%";
+	dur.style.background = hexColor(1 - rel, rel, 0);
+	
+	if(obj.type === "item axe" && tile.obj.type === "tree") {
+		console.log(tile.obj.type);
+		tile.obj.remove();
+		tile.obj = null;
+	}
+	
+	if(rel <= 0) {
+		obj.remove();
+	}
 }
 
 function centerToChar()
@@ -264,16 +389,16 @@ function moveChar(dir)
 	let x = char.x;
 	let y = char.y;
 	
-	if(dir === "ArrowLeft") {
+	if(dir === "ArrowLeft" || dir === "a") {
 		x --;
 	}
-	else if(dir === "ArrowRight") {
+	else if(dir === "ArrowRight" || dir === "d") {
 		x ++;
 	}
-	else if(dir === "ArrowUp") {
+	else if(dir === "ArrowUp" || dir === "w") {
 		y --;
 	}
-	else if(dir === "ArrowDown") {
+	else if(dir === "ArrowDown" || dir === "s") {
 		y ++;
 	}
 	

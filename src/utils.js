@@ -45,7 +45,7 @@ function hexColor(r, g, b)
 	);
 }
 
-function _randInt(n)
+function realRandInt(n)
 {
 	return Math.floor(Math.random() * n);
 }
@@ -58,4 +58,9 @@ function randInt(n)
 function randChoice(arr)
 {
 	return arr[randInt(arr.length)];
+}
+
+function pointInRect(x, y, rect)
+{
+	return x >= rect.left && y >= rect.top && x < rect.right && y < rect.bottom;
 }
