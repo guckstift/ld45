@@ -1,5 +1,5 @@
-let terras = ["grass", "soil", "stone", "sand"];//, "water"];
-let mapSize = 256;
+let terras = ["grass", "soil", "stone", "sand", "water"];
+let mapSize = 64;
 let tileSize = 32;
 
 world.offsX = 0;
@@ -21,15 +21,13 @@ for(let y=0; y<mapSize; y++) {
 	
 	for(let x=0; x<mapSize; x++) {
 		let terra = randChoice(terras);
-		//let tile = newElm("tile nodisplay invis " + terra);
-		let tile = newElm("tile " + terra);
+		let tile = newElm("tile nodisplay invis " + terra);
 		tile.style.left = x * tileSize + "px";
 		tile.terra = terra;
 		row.append(tile);
 		
 		if(tile.terra === "grass" && randInt(2) === 0) {
-			//let tree = newElm("sprite nodisplay invis tree");
-			let tree = newElm("sprite tree");
+			let tree = newElm("sprite nodisplay invis tree");
 			tile.obj = tree;
 			setSpritePos(tree, x, y);
 			world.append(tree);
@@ -115,7 +113,7 @@ function setSpritePos(sprite, x, y)
 
 function setChar(x, y)
 {
-	let radius = 16;
+	let radius = 1;
 	
 	setSpritePos(char, x, y);
 	
