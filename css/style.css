@@ -5,6 +5,7 @@ body {
 	align-items: center;
 	height: 100vh;
 	margin: 0;
+	image-rendering: pixelated;
 }
 
 #viewport {
@@ -13,6 +14,13 @@ body {
 	overflow: hidden;
 	background: #123;
 	border-radius: 8px;
+}
+
+#sidebar {
+	flex: none;
+	width: 64px;
+    height: 512px;
+    padding: 0 16px;
 }
 
 #world {
@@ -44,6 +52,10 @@ body {
 		opacity 0.5s,
 		left 0.5s,
 		top 0.5s;
+}
+
+.item {
+	transition: all 0.25s linear;
 }
 
 .nodisplay {
@@ -96,3 +108,25 @@ body {
 	height: 48px;
 	margin-top: -16px;
 }
+
+.axe {
+	background-image: url("../gfx/axe.png");
+	width: 32px;
+	height: 32px;
+	background-size: 32px;
+}
+
+.axe.picking-up {
+	width: 128px;
+	height: 128px;
+	margin-left: -46px;
+	margin-top: -46px;
+	background-size: 128px;
+}
+
+.axe.inv-item {
+	width: 64px;
+	height: 64px;
+	background-size: 64px;
+}
+

@@ -1,7 +1,13 @@
+let rndseed = 64;//60;57;55;54;//52;46;44;14;10;666;
+let rndcnt = 0;
 let terras = ["grass", "soil", "stone", "sand", "water"];
 let mapSize = 64;
 let tileSize = 32;
+let radius = 8;
+
 let moveLock = false;
+let continentTiles = [];
+let tilesToFill = 0;
 
 onload = init;
 onkeydown = keyDown;
@@ -16,24 +22,22 @@ function init()
 		row.style.top = y * tileSize + "px";
 		
 		for(let x=0; x<mapSize; x++) {
+			//let prob = Math.floor(noise2d(x, y) * terras.length);
+			//let terra = terras[prob];
 			let terra = randChoice(terras);
 			let tile = newElm("tile nodisplay invis " + terra);
+			tile.x = x;
+			tile.y = y;
 			tile.style.left = x * tileSize + "px";
 			tile.terra = terra;
 			row.append(tile);
 			
 			if(tile.terra === "grass" && randInt(2) === 0) {
-				let tree = newElm("sprite nodisplay invis tree");
-				tile.obj = tree;
-				setSpritePos(tree, x, y);
-				world.append(tree);
+				addNewObject("tree", tile);
 			}
 			
 			if(tile.terra === "stone" && randInt(2) === 0) {
-				let tree = newElm("sprite nodisplay invis rock");
-				tile.obj = tree;
-				setSpritePos(tree, x, y);
-				world.append(tree);
+				addNewObject("rock", tile);
 			}
 		}
 		
@@ -41,8 +45,29 @@ function init()
 	}
 	
 	initChar();
+	
+	fillContinent(char.x, char.y, 0, () => {
+		placeFirstAxe();
+	});
+	
 	centerToChar();
 	requestAnimationFrame(frame);
+}
+
+function addNewObject(type, tile, walkable = false)
+{
+	let dispCls = "";
+	
+	if(tile.classList.contains("nodisplay")) {
+		dispCls = "nodisplay invis ";
+	}
+	
+	let obj = newElm("sprite " + dispCls + type);
+	obj.walkable = walkable;
+	//let tile = getTile(x, y);
+	tile.obj = obj;
+	setSpritePos(obj, tile.x, tile.y);
+	world.append(obj);
 }
 
 function keyDown(e)
@@ -61,42 +86,19 @@ function frame()
 function initChar()
 {
 	for(let i=0; i<1024; i++) {
+		//let x = Math.floor(noise1d(1 + i) * mapSize);
+		//let y = Math.floor(noise1d(2 + i) * mapSize);
 		let x = randInt(mapSize);
 		let y = randInt(mapSize);
 		let tile = getTile(x, y);
 		
 		if(walkable(tile)) {
 			setChar(x, y);
-			break;
+			return;
 		}
 	}
-}
-
-function newElm(cls)
-{
-	let elm = document.createElement("div");
-	elm.className = cls;
-	return elm;
-}
-
-function hexColor(r, g, b)
-{
-	return (
-		"#"
-		+ Math.floor(255 * r).toString(16).padStart(2, "0")
-		+ Math.floor(255 * g).toString(16).padStart(2, "0")
-		+ Math.floor(255 * b).toString(16).padStart(2, "0")
-	);
-}
-
-function randInt(n)
-{
-	return Math.floor(Math.random() * n);
-}
-
-function randChoice(arr)
-{
-	return arr[randInt(arr.length)];
+	
+	throw "Could not place character";
 }
 
 function getRow(y)
@@ -126,19 +128,38 @@ function setSpritePos(sprite, x, y)
 
 function setChar(x, y)
 {
-	let radius = 1;
-	
 	setSpritePos(char, x, y);
+	
+	let tile = getTile(x, y);
+	
+	if(tile && tile.obj && tile.obj.classList.contains("item")) {
+		pickupItem(tile.obj);
+	}
 	
 	for(let dy=-radius; dy<=+radius; dy++) {
 		for(let dx=-radius; dx<=+radius; dx++) {
-			let tile = getTile(x + dx, y + dy);
-			tile && tile.classList.remove("nodisplay");
-			setTimeout(() => tile && tile.classList.remove("invis"));
-			tile && tile.obj && tile.obj.classList.remove("invis");
-			setTimeout(() => tile && tile.obj && tile.obj.classList.remove("nodisplay"));
+			if(dx * dx + dy * dy <= radius * radius) {
+				let tile = getTile(x + dx, y + dy);
+				tile && tile.classList.remove("nodisplay");
+				setTimeout(() => tile && tile.classList.remove("invis"));
+				tile && tile.obj && tile.obj.classList.remove("nodisplay");
+				setTimeout(() => tile && tile.obj && tile.obj.classList.remove("invis"));
+			}
 		}
 	}
+}
+
+function pickupItem(obj)
+{
+	obj.classList.add("picking-up");
+	
+	setTimeout(() => {
+		sidebar.append(obj);
+		obj.classList.add("inv-item");
+		obj.classList.remove("picking-up");
+		obj.classList.remove("sprite");
+		obj.classList.remove("item");
+	}, 250);
 }
 
 function centerToChar()
@@ -158,7 +179,9 @@ function scrollToChar()
 	let delta;
 	let ymove = false;
 	
-	delta = charRect.right - viewRect.right + tileSize;
+	let scrollRadius = Math.min(radius + 1, 7);
+	
+	delta = charRect.right - viewRect.right + tileSize * scrollRadius;
 	
 	if(delta > 0) {
 		world.offsX += delta;
@@ -166,7 +189,7 @@ function scrollToChar()
 		//viewport.scrollLeft += delta;
 	}
 	
-	delta = charRect.left - viewRect.left - tileSize;
+	delta = charRect.left - viewRect.left - tileSize * scrollRadius;
 	
 	if(delta < 0) {
 		world.offsX += delta;
@@ -174,7 +197,7 @@ function scrollToChar()
 		//viewport.scrollLeft += delta;
 	}
 	
-	delta = charRect.bottom - viewRect.bottom + tileSize;
+	delta = charRect.bottom - viewRect.bottom + tileSize * scrollRadius;
 	
 	if(delta > 0) {
 		world.offsY += delta;
@@ -183,7 +206,7 @@ function scrollToChar()
 		//viewport.scrollTop += delta;
 	}
 	
-	delta = charRect.top - viewRect.top - tileSize;
+	delta = charRect.top - viewRect.top - tileSize * scrollRadius;
 	
 	if(delta < 0) {
 		world.offsY += delta;
@@ -225,7 +248,15 @@ function posOutside(x, y)
 
 function walkable(tile)
 {
-	return tile && tile.terra !== "water" && !tile.obj;
+	if(!tile || tile.terra === "water") {
+		return false;
+	}
+	
+	if(tile.obj && tile.obj.walkable === false) {
+		return false;
+	}
+	
+	return true;
 }
 
 function moveChar(dir)
@@ -264,6 +295,47 @@ function moveChar(dir)
 	}
 }
 
+function fillContinent(x = char.x, y = char.y, interval = 1000, cb = null)
+{
+	let tile = getTile(x, y);
+		
+	if(walkable(tile) && !tile.continent) {
+		tile.continent = 1;
+		tile.style.background = "#f66";
+		continentTiles.push({x, y});
+		lastContinentTile = {x, y};
+		tilesToFill += 4;
+		
+		setTimeout(() => {
+			fillContinent(x - 1, y, interval, cb);
+			tilesToFill --;
+			fillContinent(x + 1, y, interval, cb);
+			tilesToFill --;
+			fillContinent(x, y - 1, interval, cb);
+			tilesToFill --;
+			fillContinent(x, y + 1, interval, cb);
+			tilesToFill --;
+		}, interval);
+	}
+	
+	if(cb && tilesToFill === 1) {
+		cb();
+	}
+}
+
+function placeFirstAxe()
+{
+	var {x, y} = lastContinentTile;
+	//console.log(x, y);
+	//var {x, y} = continentTiles[continentTiles.length - 1];
+	let tile = getTile(x, y);
+	addNewObject("item axe", tile, true);
+	/*
+	var {x, y} = continentTiles[continentTiles.length - 2];
+	tile = getTile(x, y);
+	addNewObject("item axe", tile, true);
+	*/
+}
 
 
 
