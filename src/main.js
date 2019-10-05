@@ -39,7 +39,8 @@ function initChar()
 		let y = randInt(mapSize);
 		let tile = getTile(x, y);
 		
-		if(tile.terra !== "water") {
+		if(walkable(tile)) {
+		//if(tile.terra !== "water") {
 			setChar(x, y);
 			break;
 		}
@@ -75,7 +76,9 @@ function randChoice(arr)
 
 function getTile(x, y)
 {
-	return ground.children[y].children[x];
+	if(!posOutside(x, y)) {
+		return ground.children[y].children[x];
+	}
 }
 
 function setSpritePos(sprite, x, y)
@@ -93,22 +96,13 @@ function setChar(x, y)
 {
 	setSpritePos(char, x, y);
 	
-	let tile;
-	tile = getTile(x, y);
-	tile && tile.classList.remove("invis");
-	tile && tile.obj && tile.obj.classList.remove("invis");
-	tile = getTile(x - 1, y);
-	tile && tile.classList.remove("invis");
-	tile && tile.obj && tile.obj.classList.remove("invis");
-	tile = getTile(x + 1, y);
-	tile && tile.classList.remove("invis");
-	tile && tile.obj && tile.obj.classList.remove("invis");
-	tile = getTile(x, y - 1);
-	tile && tile.classList.remove("invis");
-	tile && tile.obj && tile.obj.classList.remove("invis");
-	tile = getTile(x, y + 1);
-	tile && tile.classList.remove("invis");
-	tile && tile.obj && tile.obj.classList.remove("invis");
+	for(let dy=-1; dy<=+1; dy++) {
+		for(let dx=-1; dx<=+1; dx++) {
+			let tile = getTile(x + dx, y + dy);
+			tile && tile.classList.remove("invis");
+			tile && tile.obj && tile.obj.classList.remove("invis");
+		}
+	}
 	
 	let charRect = char.getBoundingClientRect();
 	let viewRect = viewport.getBoundingClientRect();
@@ -144,6 +138,11 @@ function posOutside(x, y)
 	return x < 0 || x >= mapSize || y < 0 || y >= mapSize;
 }
 
+function walkable(tile)
+{
+	return tile && tile.terra !== "water" && !tile.obj;
+}
+
 function moveChar(dir)
 {
 	let x = char.x;
@@ -162,11 +161,13 @@ function moveChar(dir)
 		y ++;
 	}
 	
-	if(posOutside(x, y)) {
+	let tile = getTile(x, y);
+	
+	if(!walkable(tile)) {
+	//if(posOutside(x, y)) {
 		return;
 	}
 	
-	let tile = getTile(x, y);
 	
 	if(tile.terra !== "water") {
 		setChar(x, y);
