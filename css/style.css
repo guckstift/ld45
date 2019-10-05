@@ -53,7 +53,7 @@ body {
 }
 
 
-.char {
+#char {
 	box-sizing: border-box;
 	background: #fc9;
 	width: 16px;

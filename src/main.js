@@ -1,20 +1,45 @@
 let terras = ["grass", "soil", "stone", "sand", "water"];
-let mapSize = 32;
+let mapSize = 16;
+let tileSize = 32;
 
-let char = newElm("char");
+onkeydown = e => {
+	if(e.key === "ArrowLeft") {
+		setChar(char.x - 1, char.y);
+	}
+	if(e.key === "ArrowRight") {
+		setChar(char.x + 1, char.y);
+	}
+	if(e.key === "ArrowUp") {
+		setChar(char.x, char.y - 1);
+	}
+	if(e.key === "ArrowDown") {
+		setChar(char.x, char.y + 1);
+	}
+};
 
 for(let y=0; y<mapSize; y++) {
 	let row = newElm("row");
 	
 	for(let x=0; x<mapSize; x++) {
-		let tile = newElm("tile " + randChoice(terras));
+		let terra = randChoice(terras);
+		let tile = newElm("tile " + terra);
+		tile.terra = terra;
 		row.append(tile);
 	}
 	
 	ground.append(row);
 }
 
-world.append(char);
+for(let i=0; i<1024; i++) {
+	let x = randInt(mapSize);
+	let y = randInt(mapSize);
+	let tile = getTile(x, y);
+	
+	if(tile.terra !== "water") {
+		setChar(x, y);
+		break;
+	}
+}
 
 function newElm(cls)
 {
@@ -41,4 +66,17 @@ function randInt(n)
 function randChoice(arr)
 {
 	return arr[randInt(arr.length)];
+}
+
+function getTile(x, y)
+{
+	return ground.children[y].children[x];
+}
+
+function setChar(x, y)
+{
+	char.x = x;
+	char.y = y;
+	char.style.left = x * tileSize + "px";
+	char.style.top = y * tileSize + "px";
 }
