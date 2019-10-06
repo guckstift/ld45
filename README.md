@@ -1,11 +1,9 @@
-# Ludum Dare 45
+# Nothing Box
 
 This is my Ludum Dare 45 Jam Game
-
-Work in Progress...
 
 Play it here:
 https://guckstift.github.io/ld45/
 
-![Work in Progress](doc/wip5.jpg)
+![Screenshot](doc/screens/3.jpg)
 
