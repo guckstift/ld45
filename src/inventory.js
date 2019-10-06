@@ -1,11 +1,11 @@
 let itemTypes = {
 	axe: {
 		hasDur: true,
-		maxDur: 16,
+		maxDur: 160,
 	},
 	pickaxe: {
 		hasDur: true,
-		maxDur: 16,
+		maxDur: 160,
 	},
 	wood: {
 		hasDur: false,
@@ -43,6 +43,24 @@ function getToolFor(objType)
 	}
 }
 
+function consumeItem(type, count)
+{
+	let item = getItemOf(type);
+	
+	if(item && item.count >= count) {
+		item.count -= count;
+		item.countElm.textContent = item.count;
+		
+		if(item.count < 2) {
+			item.countElm.style.display = "none";
+		}
+		
+		if(item.count === 0) {
+			item.remove();
+		}
+	}
+}
+
 function getItemOf(type)
 {
 	for(let i=0; i<sidebar.children.length; i++) {
@@ -62,18 +80,20 @@ function addInventoryItem(type)
 	
 	if(item) {
 		item.count ++;
-		
-		if(item.count === 2) {
-			item.countElm = newElm("item-count");
-			item.append(item.countElm);
-		}
-		
 		item.countElm.textContent = item.count;
+		
+		if(item.count > 1) {
+			item.countElm.style.display = "";
+		}
 	}
 	else {
 		let item = newElm("inv-item " + type);
 		item.type = type;
 		item.count = 1;
+		item.countElm = newElm("item-count");
+		item.append(item.countElm);
+		item.countElm.textContent = item.count;
+		item.countElm.style.display = "none";
 		
 		if(hasDur) {
 			item.durability = newElm("durability");

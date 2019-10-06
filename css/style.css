@@ -1,3 +1,15 @@
+@keyframes pulse {
+	from {
+		transform: scale(0.75);
+	}
+	50% {
+		transform: scale(1.5);
+	}
+	to {
+		transform: scale(0.75);
+	}
+}
+
 body {
 	background: black;
 	display: flex;
@@ -36,6 +48,7 @@ body {
 	position: relative;
 }
 
+
 .grayed .tile ,
 .grayed .sprite,
 .grayed .inv-item,
@@ -47,11 +60,65 @@ body {
 	background: #222;
 }
 
+
+.grayed2 .tile ,
+.grayed2 .laserSender ,
+.grayed2 .laserBeam {
+	filter: grayscale(1);
+}
+
+.grayed2 #viewport {
+	background: #222;
+}
+
+
+.grayed3 .tile ,
+.grayed3 #toolCursor {
+	filter: grayscale(0.75);
+}
+
+.grayed3 .laserSender ,
+.grayed3 .laserBeam {
+	filter: grayscale(1);
+}
+
+.grayed3 #viewport {
+	background: #222;
+}
+
+
 .grayed .redDiamond ,
 .grayed .greenDiamond ,
 .grayed .blueDiamond {
 	filter: grayscale(0);
 }
+
+.rotate0 {
+	transform: rotate(0deg);
+}
+.rotate1 {
+	transform: rotate(45deg);
+}
+.rotate2 {
+	transform: rotate(90deg);
+}
+.rotate3 {
+	transform: rotate(135deg);
+}
+.rotate4 {
+	transform: rotate(180deg);
+}
+.rotate5 {
+	transform: rotate(225deg);
+}
+.rotate6 {
+	transform: rotate(270deg);
+}
+.rotate7 {
+	transform: rotate(315deg);
+}
+
+
 .row {
 	position: absolute;
 	left: 0;
@@ -73,6 +140,9 @@ body {
 		opacity 0.5s,
 		left 0.5s,
 		top 0.5s;
+	width: 32px;
+	height: 32px;
+	background-size: 32px;
 }
 
 .item {
@@ -123,4 +193,5 @@ body {
 	top: 0;
 	display: none;
 	z-index: 9999;
+	animation: pulse 1s infinite;
 }

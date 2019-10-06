@@ -1,0 +1,9 @@
+TODO
+
+* make receiver gray until final
+* gfx terrain with seams
+* ani water
+* balance draft wood need
+* flood lava and final animation
+
+DONE

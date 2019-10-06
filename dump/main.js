@@ -1,4 +1,4 @@
-let rndseed = 64;
+let rndseed = 64;//60;57;55;54;//52;46;44;14;10;666;
 let rndcnt = 0;
 let terras = ["grass", "soil", "stone", "sand", "water"];
 let mapSize = 64;
@@ -9,7 +9,6 @@ let screenW = screenSize + 100;
 let screenH = screenSize;
 let woodForRaft = 2;
 let diamondsFound = 0;
-let correctLasers = 0;
 
 let moveLock = false;
 let continentTiles = [];
@@ -35,6 +34,7 @@ function addNewObject(type, tile, walkable = false)
 	let obj = newElm("sprite " + dispCls + type);
 	obj.type = type;
 	obj.walkable = walkable;
+	//let tile = getTile(x, y);
 	tile.obj = obj;
 	setSpritePos(obj, tile.x, tile.y);
 	world.append(obj);
@@ -42,7 +42,7 @@ function addNewObject(type, tile, walkable = false)
 	return obj;
 }
 
-function addLaserSender(color, tile, rot = 0, correct = false, correctRot = 0)
+function addLaserSender(color, tile, rot = 0)
 {
 	let dispCls = "";
 	
@@ -52,16 +52,9 @@ function addLaserSender(color, tile, rot = 0, correct = false, correctRot = 0)
 	
 	let sender = addNewObject("laserSender", tile);
 	sender.classList.add(color);
-	
-	let beam = newElm(
-		"sprite " + dispCls + "laserBeam " + color + " rotate" + rot +
-		(correct ? " correct" : "")
-	);
-	
+	let beam = newElm("sprite " + dispCls + "laserBeam " + color + " rotate" + rot);
 	sender.beam = beam;
 	sender.rot = rot;
-	sender.correct = correct;
-	sender.correctRot = correctRot;
 	setSpritePos(beam, tile.x, tile.y);
 	world.append(beam);
 	
@@ -70,40 +63,9 @@ function addLaserSender(color, tile, rot = 0, correct = false, correctRot = 0)
 
 function rotateSender(sender)
 {
-	let wasCorrect = sender.rot === sender.correctRot;
-	
 	sender.beam.classList.remove("rotate" + sender.rot);
 	sender.rot = (sender.rot + 1) % 8;
 	sender.beam.classList.add("rotate" + sender.rot);
-	
-	//correctLasers
-	
-	if(sender.correct) {
-		if(sender.rot === sender.correctRot) {
-			correctLasers ++;
-		}
-		else if(wasCorrect) {
-			correctLasers --;
-		}
-	}
-	else {
-		if(sender.rot === sender.correctRot) {
-			correctLasers --;
-		}
-		else if(wasCorrect) {
-			correctLasers ++;
-		}
-	}
-	
-	if(correctLasers === 3) {
-		allLasersCorrect();
-	}
-}
-
-function allLasersCorrect()
-{
-	console.log("YIPPY");
-	fillContinent(34, 36, 125)
 }
 
 function removeObjectAt(tile)
@@ -124,6 +86,16 @@ function keyDown(e)
 function mouseMove(e)
 {
 	let [x, y] = clientPointToCoord(e.clientX, e.clientY);
+	
+	/*
+	setToolCursor();
+	
+	[[-1,0], [+1,0], [0,-1], [0,+1]].forEach(([dx, dy]) => {
+		if(testAdjacentPoint(x, y, dx, dy)) {
+			mouseOverAdj(char.x + dx, char.y + dy);
+		}
+	});
+	*/
 }
 
 function clientPointToCoord(x, y)
@@ -137,8 +109,21 @@ function clientPointToCoord(x, y)
 function click(e)
 {
 	let [x, y] = clientPointToCoord(e.clientX, e.clientY);
+	
 	console.log(x, y);
 	fillContinent(x, y);
+	
+	/*
+	let [x, y] = [e.clientX, e.clientY];
+	
+	setToolCursor();
+	
+	[[-1,0], [+1,0], [0,-1], [0,+1]].forEach(([dx, dy]) => {
+		if(testAdjacentPoint(x, y, dx, dy)) {
+			clickAdj(char.x + dx, char.y + dy);
+		}
+	});
+	*/
 }
 
 function mouseOverAdj(x, y)
@@ -205,6 +190,8 @@ function clickAdj(x, y)
 {
 	let tile = getTile(x, y);
 	
+	console.log("clickAdj");
+	
 	if(tile.obj) {
 		let tool = getToolFor(tile.obj.type);
 		
@@ -213,6 +200,7 @@ function clickAdj(x, y)
 			setToolCursor();
 		}
 		else if(tile.obj.type === "laserSender") {
+			console.log("rot");
 			rotateSender(tile.obj);
 			setBuildCursor("rotate", x, y);
 		}
@@ -230,6 +218,7 @@ function clickAdj(x, y)
 
 function buildRaft(x, y)
 {
+	console.log("build raft");
 	addNewObject("raft", getTile(x, y), true);
 	consumeItem("wood", woodForRaft);
 }
@@ -252,6 +241,8 @@ function testAdjacentPoint(px, py, dx, dy)
 function initChar()
 {
 	for(let i=0; i<1024; i++) {
+		//let x = Math.floor(noise1d(1 + i) * mapSize);
+		//let y = Math.floor(noise1d(2 + i) * mapSize);
 		let x = randInt(mapSize);
 		let y = randInt(mapSize);
 		let tile = getTile(x, y);
@@ -317,6 +308,7 @@ function pickupItemAt(tile)
 		}
 		else {
 			addInventoryItem(type);
+			console.log(type);
 			
 			if(type === "redDiamond" || type === "greenDiamond" || type === "blueDiamond") {
 				foundDiamond();
@@ -448,6 +440,7 @@ function moveChar(dir)
 				clickAdj(x, y);
 			}
 			else if(onraft === false && tile.obj && tile.obj.type === "raft") {
+				console.log("there is a raft");
 				stepOnRaft(x, y);
 			}
 			else {
@@ -464,7 +457,7 @@ function moveChar(dir)
 	}
 	
 	moveLock = true;
-	setTimeout(() => moveLock = false, 10);//125);
+	setTimeout(() => moveLock = false, 125);//125);
 }
 
 function stepOnRaft(x, y)
@@ -527,6 +520,7 @@ function placeFirstAxe()
 	let tile = getTile(x, y);
 	addNewObject("item axe", tile, true);
 }
+
 
 
 
