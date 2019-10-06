@@ -3,11 +3,15 @@ let rndcnt = 0;
 let terras = ["grass", "soil", "stone", "sand", "water"];
 let mapSize = 64;
 let tileSize = 32;
-let radius = 4;
+let radius = 1;
+let screenSize = 920;
+let screenW = screenSize + 100;
+let screenH = screenSize;
 
 let moveLock = false;
 let continentTiles = [];
 let tilesToFill = 0;
+let continentCnt = 0;
 
 onload = init;
 onkeydown = keyDown;
@@ -35,27 +39,98 @@ function init()
 			if(tile.terra === "grass" && randInt(2) === 0) {
 				addNewObject("tree", tile);
 			}
-			
-			if(tile.terra === "stone" && randInt(2) === 0) {
+			else if(tile.terra === "stone" && randInt(2) === 0) {
 				addNewObject("rock", tile);
 			}
 		}
 		
 		ground.append(row);
 	}
+
+	for(let y=0; y<mapSize; y++) {
+		for(let x=0; x<mapSize; x++) {
+			let tile = getTile(x, y);
+			
+			if(tile.terra === "sand" && randInt(16) === 0) {
+				addNewObject("sandStone", tile);
+			}
+		}
+	}
 	
-	initChar();
+	//initChar();
+
+	/*
+	for(let y=0; y<mapSize; y++) {
+		for(let x=0; x<mapSize; x++) {
+			let tile = getTile(x, y);
+			
+			if(!tile.obj && randInt(128) === 0) {
+				addNewObject("item blueDiamond", tile, true);
+			}
+		}
+	}
+	*/
 	
+	fillTerraCircle(20, 10, 5, "sand");
+	fillTerraCircle(24, 11, 7, "sand");
+	fillTerraCircle(20, 10, 4, "water");
+	fillTerraCircle(24, 11, 6, "water");
+	
+	setChar(13, 18);
+	
+	addNewObject("item axe", getTile(16, 20), true); // first axe
+	addNewObject("item pickaxe", getTile(20, 16), true); // pickaxe
+	addNewObject("item redDiamond", getTile(13, 21), true);
+	addNewObject("item greenDiamond", getTile(5, 11), true);
+	addNewObject("item blueDiamond", getTile(25, 10), true);
+	
+	addNewObject("item carrot", getTile(17, 13), true);
+	addNewObject("item carrot", getTile(10, 18), true);
+	addNewObject("item carrot", getTile(6, 15), true);
+	addNewObject("item carrot", getTile(14, 6), true);
+	addNewObject("item carrot", getTile(0, 17), true);
+	
+	addNewObject("rock", getTile(6, 14)); // close in blue diamond
+	addNewObject("rock", getTile(18, 19));
+	addNewObject("rock", getTile(7, 12));
+	addNewObject("rock", getTile(8, 18));
+	addNewObject("rock", getTile(15, 13));
+	addNewObject("mossRock", getTile(13, 22));
+	addNewObject("rock", getTile(14, 21));
+	addNewObject("sandStone", getTile(14, 5));
+	
+	/*
 	fillContinent(char.x, char.y, 0, () => {
 		placeFirstAxe();
 	});
+	*/
 	
 	centerToChar();
 	requestAnimationFrame(frame);
 }
 
+function fillTerraCircle(x, y, r, terra)
+{
+	for(let dy=-r; dy<=+r; dy++) {
+		for(let dx=-r; dx<=+r; dx++) {
+			if(dx * dx + dy * dy <= r * r) {
+				let tile = getTile(x + dx, y + dy);
+				tile.classList.remove(tile.terra);
+				tile.terra = terra;
+				tile.classList.add(tile.terra);
+				
+				if(terra === "water" && tile.obj) {
+					removeObjectAt(tile);
+				}
+			}
+		}
+	}
+}
+
 function addNewObject(type, tile, walkable = false)
 {
+	removeObjectAt(tile);
+	
 	let dispCls = "";
 	
 	if(tile.classList.contains("nodisplay")) {
@@ -71,6 +146,14 @@ function addNewObject(type, tile, walkable = false)
 	world.append(obj);
 }
 
+function removeObjectAt(tile)
+{
+	if(tile && tile.obj) {
+		tile.obj.remove();
+		tile.obj = null;
+	}
+}
+
 function keyDown(e)
 {
 	if(e.key.startsWith("Arrow") || ["w", "a", "s", "d"].includes(e.key)) {
@@ -80,19 +163,35 @@ function keyDown(e)
 
 function mouseMove(e)
 {
-	let [x, y] = [e.clientX, e.clientY];
+	let [x, y] = clientPointToCoord(e.clientX, e.clientY);
 	
-	toolCursor.style.display = "";
+	/*
+	setToolCursor();
 	
 	[[-1,0], [+1,0], [0,-1], [0,+1]].forEach(([dx, dy]) => {
 		if(testAdjacentPoint(x, y, dx, dy)) {
 			mouseOverAdj(char.x + dx, char.y + dy);
 		}
 	});
+	*/
+}
+
+function clientPointToCoord(x, y)
+{
+	let rect = viewport.getBoundingClientRect();
+	x = Math.floor((x - rect.left + world.offsX) / tileSize);
+	y = Math.floor((y - rect.top + world.offsY) / tileSize);
+	return [x, y];
 }
 
 function click(e)
 {
+	let [x, y] = clientPointToCoord(e.clientX, e.clientY);
+	
+	console.log(x, y);
+	fillContinent(x, y);
+	
+	/*
 	let [x, y] = [e.clientX, e.clientY];
 	
 	setToolCursor();
@@ -102,6 +201,7 @@ function click(e)
 			clickAdj(char.x + dx, char.y + dy);
 		}
 	});
+	*/
 }
 
 function mouseOverAdj(x, y)
@@ -119,20 +219,21 @@ function mouseOverAdj(x, y)
 
 function setToolCursor(tool, x, y)
 {
+	toolCursor.type && toolCursor.classList.remove(toolCursor.type);
+	toolCursor.style.display = "";
+	toolCursor.type = null;
+	toolCursor.tool = null;
+	
 	if(tool) {
 		let tile = getTile(x, y);
-		let type = tool.type.slice(5);
 		let rect = tile.getBoundingClientRect();
-		toolCursor.classList.remove(toolCursor.type);
-		toolCursor.type = type;
+		toolCursor.type && toolCursor.classList.remove(toolCursor.type);
+		toolCursor.type = tool.type;
 		toolCursor.tool = tool;
-		toolCursor.classList.add(type);
+		toolCursor.classList.add(tool.type);
 		toolCursor.style.left = rect.left + "px";
 		toolCursor.style.top = rect.top + "px";
 		toolCursor.style.display = "block";
-	}
-	else {
-		toolCursor.style.display = "";
 	}
 }
 
@@ -162,19 +263,6 @@ function testAdjacentPoint(px, py, dx, dy)
 	}
 	
 	return false;
-}
-
-function getToolFor(objType)
-{
-	if(objType === "tree") {
-		for(let i=0; i<sidebar.children.length; i++) {
-			let item = sidebar.children[i];
-			
-			if(item.type === "item axe") {
-				return item;
-			}
-		}
-	}
 }
 
 function frame()
@@ -233,13 +321,18 @@ function setChar(x, y)
 	let tile = getTile(x, y);
 	
 	if(tile && tile.obj && tile.obj.classList.contains("item")) {
-		pickupItem(tile.obj);
+		pickupItemAt(tile);
 	}
 	
+	updateViewRange();
+}
+
+function updateViewRange()
+{
 	for(let dy=-radius; dy<=+radius; dy++) {
 		for(let dx=-radius; dx<=+radius; dx++) {
 			if(dx * dx + dy * dy <= radius * radius) {
-				let tile = getTile(x + dx, y + dy);
+				let tile = getTile(char.x + dx, char.y + dy);
 				tile && tile.classList.remove("nodisplay");
 				setTimeout(() => tile && tile.classList.remove("invis"));
 				tile && tile.obj && tile.obj.classList.remove("nodisplay");
@@ -249,49 +342,75 @@ function setChar(x, y)
 	}
 }
 
-function pickupItem(obj)
+function pickupItemAt(tile)
 {
+	let obj = tile.obj;
 	obj.classList.add("picking-up");
 	
 	setTimeout(() => {
-		sidebar.append(obj);
-		obj.classList.add("inv-item");
-		obj.classList.remove("picking-up");
-		obj.classList.remove("sprite");
-		obj.classList.remove("item");
-		obj.durability = newElm("durability");
-		obj.durability.val = 2;
-		obj.durability.maxval = 2;
-		obj.style.left = "";
-		obj.style.top = "";
-		obj.append(obj.durability);
+		let type = obj.type.slice(5);
+		
+		if(type === "carrot") {
+			radius ++;
+			updateViewRange();
+		}
+		else {
+			addInventoryItem(type);
+		}
+		
+		removeObjectAt(tile);
 	}, 250);
 }
 
-function useTool(obj, tile)
+function cutTree(tile)
 {
-	let dur = obj.durability;
+	tile.obj.remove();
+	tile.obj = null;
+	addInventoryItem("wood");
+}
+
+function pickRock(tile)
+{
+	tile.obj.remove();
+	tile.obj = null;;
+	addInventoryItem("brick");
+}
+
+function pickSandStone(tile)
+{
+	tile.obj.remove();
+	tile.obj = null;;
+	addInventoryItem("sandBrick");
+}
+
+function useTool(tool, tile)
+{
+	let dur = tool.durability;
 	dur.val = Math.max(0, dur.val - 1);
 	let rel = dur.val / dur.maxval;
 	dur.style.width = rel * 100 + "%";
 	dur.style.background = hexColor(1 - rel, rel, 0);
 	
-	if(obj.type === "item axe" && tile.obj.type === "tree") {
-		console.log(tile.obj.type);
-		tile.obj.remove();
-		tile.obj = null;
+	if(tool.type === "axe" && tile.obj.type === "tree") {
+		cutTree(tile);
+	}
+	else if(tool.type === "pickaxe" && (tile.obj.type === "rock" || tile.obj.type === "mossRock")) {
+		pickRock(tile);
+	}
+	else if(tool.type === "pickaxe" && tile.obj.type === "sandStone") {
+		pickSandStone(tile);
 	}
 	
 	if(rel <= 0) {
-		obj.remove();
+		tool.remove();
 	}
 }
 
 function centerToChar()
 {
 	let charRect = char.getBoundingClientRect();
-	world.offsX = char.xpx - 256;
-	world.offsY = char.ypx - 256;
+	world.offsX = char.xpx - screenW / 2;
+	world.offsY = char.ypx - screenH / 2;
 	world.style.left = -world.offsX + "px";
 	world.style.top = -world.offsY + "px";
 	updateCullRows();
@@ -311,7 +430,6 @@ function scrollToChar()
 	if(delta > 0) {
 		world.offsX += delta;
 		world.style.left = -world.offsX + "px";
-		//viewport.scrollLeft += delta;
 	}
 	
 	delta = charRect.left - viewRect.left - tileSize * scrollRadius;
@@ -319,7 +437,6 @@ function scrollToChar()
 	if(delta < 0) {
 		world.offsX += delta;
 		world.style.left = -world.offsX + "px";
-		//viewport.scrollLeft += delta;
 	}
 	
 	delta = charRect.bottom - viewRect.bottom + tileSize * scrollRadius;
@@ -328,7 +445,6 @@ function scrollToChar()
 		world.offsY += delta;
 		world.style.top = -world.offsY + "px";
 		ymove = true;
-		//viewport.scrollTop += delta;
 	}
 	
 	delta = charRect.top - viewRect.top - tileSize * scrollRadius;
@@ -337,7 +453,6 @@ function scrollToChar()
 		world.offsY += delta;
 		world.style.top = -world.offsY + "px";
 		ymove = true;
-		//viewport.scrollTop += delta;
 	}
 	
 	if(ymove) {
@@ -352,7 +467,7 @@ function updateCullRows()
 		let row = getRow(y);
 		
 		if(row) {
-			if(y >= firsty && y <= firsty + 16) {
+			if(y >= firsty && y <= firsty + Math.ceil(screenH / tileSize)) {
 				if(row.classList.contains("nodisplay")) {
 					row.classList.remove("nodisplay");
 				}
@@ -386,6 +501,10 @@ function walkable(tile)
 
 function moveChar(dir)
 {
+	if(moveLock) {
+		return;
+	}
+	
 	let x = char.x;
 	let y = char.y;
 	
@@ -405,40 +524,53 @@ function moveChar(dir)
 	let tile = getTile(x, y);
 	
 	if(!walkable(tile)) {
-		return;
+		if(toolCursor.tool) {
+			clickAdj(x, y);
+			setToolCursor();
+		}
+		else {
+			mouseOverAdj(x, y);
+		}
 	}
-	
-	if(moveLock) {
-		return;
+	else {
+		setToolCursor();
+		
+		if(tile.terra !== "water") {
+			setChar(x, y);
+		}
 	}
 	
 	moveLock = true;
-	setTimeout(() => moveLock = false, 125);
-	
-	if(tile.terra !== "water") {
-		setChar(x, y);
-	}
+	setTimeout(() => moveLock = false, 12);//125);
 }
 
-function fillContinent(x = char.x, y = char.y, interval = 1000, cb = null)
+function fillContinent(x = char.x, y = char.y, interval = 0, cb = null, root = true)
 {
 	let tile = getTile(x, y);
+	
+	if(root) {
+		continentCnt++;
+	}
 		
 	if(walkable(tile) && !tile.continent) {
-		tile.continent = 1;
-		tile.style.background = "#f66";
+		tile.continent = continentCnt;
+		tile.style.background = hexColor(
+			tile.continent >> 0 & 1,
+			tile.continent >> 1 & 1,
+			tile.continent >> 2 & 1,
+		);
 		continentTiles.push({x, y});
 		lastContinentTile = {x, y};
 		tilesToFill += 4;
 		
 		setTimeout(() => {
-			fillContinent(x - 1, y, interval, cb);
+			fillContinent(x - 1, y, interval, cb, false);
 			tilesToFill --;
-			fillContinent(x + 1, y, interval, cb);
+			fillContinent(x + 1, y, interval, cb, false);
 			tilesToFill --;
-			fillContinent(x, y - 1, interval, cb);
+			fillContinent(x, y - 1, interval, cb, false);
 			tilesToFill --;
-			fillContinent(x, y + 1, interval, cb);
+			fillContinent(x, y + 1, interval, cb, false);
 			tilesToFill --;
 		}, interval);
 	}
@@ -450,16 +582,9 @@ function fillContinent(x = char.x, y = char.y, interval = 1000, cb = null)
 
 function placeFirstAxe()
 {
-	var {x, y} = lastContinentTile;
-	//console.log(x, y);
-	//var {x, y} = continentTiles[continentTiles.length - 1];
+	let {x, y} = lastContinentTile;
 	let tile = getTile(x, y);
 	addNewObject("item axe", tile, true);
-	/*
-	var {x, y} = continentTiles[continentTiles.length - 2];
-	tile = getTile(x, y);
-	addNewObject("item axe", tile, true);
-	*/
 }
 
 

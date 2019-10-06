@@ -40,6 +40,38 @@
 	margin-top: -16px;
 }
 
+.mossRock {
+	background: url("../gfx/moss-rock.png");
+	width: 32px;
+	height: 48px;
+	margin-top: -16px;
+}
+
+.sandStone {
+	background: url("../gfx/sand-stone.png");
+	width: 32px;
+	height: 48px;
+	margin-top: -16px;
+}
+
+.redDiamond {
+	background: url("../gfx/red-diamond.png");
+	width: 32px;
+	height: 32px;
+}
+
+.blueDiamond {
+	background: url("../gfx/blue-diamond.png");
+	width: 32px;
+	height: 32px;
+}
+
+.greenDiamond {
+	background: url("../gfx/green-diamond.png");
+	width: 32px;
+	height: 32px;
+}
+
 .axe {
 	background-image: url("../gfx/axe.png");
 	width: 32px;
@@ -47,17 +79,37 @@
 	background-size: 32px;
 }
 
-.axe.picking-up {
-	width: 128px;
-	height: 128px;
-	margin-left: -46px;
-	margin-top: -46px;
-	background-size: 128px;
+.pickaxe {
+	background-image: url("../gfx/pickaxe.png");
+	width: 32px;
+	height: 32px;
+	background-size: 32px;
 }
 
-.axe.inv-item {
-	width: 64px;
-	height: 64px;
-	background-size: 64px;
+.wood {
+	background-image: url("../gfx/wood.png");
+	width: 32px;
+	height: 32px;
+	background-size: 32px;
 }
 
+.brick {
+	background-image: url("../gfx/brick.png");
+	width: 32px;
+	height: 32px;
+	background-size: 32px;
+}
+
+.sandBrick {
+	background-image: url("../gfx/sand-brick.png");
+	width: 32px;
+	height: 32px;
+	background-size: 32px;
+}
+
+.carrot {
+	background-image: url("../gfx/carrot.png");
+	width: 32px;
+	height: 32px;
+	background-size: 32px;
+}

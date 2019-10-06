@@ -6,11 +6,15 @@ body {
 	height: 100vh;
 	margin: 0;
 	image-rendering: pixelated;
+	
+	--screenSize: 920px;
+	--screenW: calc(var(--screenSize) + 100px);
+	--screenH: var(--screenSize);
 }
 
 #viewport {
-	width: 512px;
-	height: 512px;
+	width: var(--screenW);
+	height: var(--screenH);
 	overflow: hidden;
 	background: #123;
 	border-radius: 8px;
@@ -19,7 +23,7 @@ body {
 #sidebar {
 	flex: none;
 	width: 64px;
-    height: 512px;
+    height: var(--screenH);
     padding: 0 16px;
 	position: relative;
 }
@@ -32,6 +36,22 @@ body {
 	position: relative;
 }
 
+.grayed .tile ,
+.grayed .sprite,
+.grayed .inv-item,
+.grayed #toolCursor {
+	filter: grayscale(1);
+}
+
+.grayed #viewport {
+	background: #222;
+}
+
+.grayed .redDiamond ,
+.grayed .greenDiamond ,
+.grayed .blueDiamond {
+	filter: grayscale(0);
+}
 .row {
 	position: absolute;
 	left: 0;
@@ -67,8 +87,23 @@ body {
 	opacity: 0;
 }
 
+.picking-up {
+	transform: scale(4);
+	z-index: 99999 !important;
+}
+
 .inv-item {
+	width: 64px !important;
+	height: 64px !important;
+	background-size: 64px !important;
 	position: relative;
+}
+
+.item-count {
+	position: absolute;
+	right: 0;
+	bottom: 0;
+	color: white;
 }
 
 .durability {
