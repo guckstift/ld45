@@ -1,5 +1,7 @@
 let debug = false;
 
+let sndTheme = null;
+
 let rndseed = 64;
 let rndcnt = 0;
 let terras = ["grass", "soil", "stone", "sand", "water"];
@@ -118,6 +120,7 @@ function removeObjectAt(tile)
 
 function keyDown(e)
 {
+	sndTheme.play();
 	if(e.key.startsWith("Arrow") || ["w", "a", "s", "d"].includes(e.key)) {
 		moveChar(e.key);
 	}

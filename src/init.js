@@ -1,5 +1,12 @@
 function init()
 {
+	sndTheme = document.createElement("audio");
+	sndTheme.src = "audio/theme.mp3";
+	sndTheme.setAttribute("preload", "auto");
+	sndTheme.setAttribute("controls", "none");
+	sndTheme.style.display = "none";
+	document.body.append(sndTheme);
+	
 	if(debug) {
 		document.body.classList.remove("grayed");
 	}
