@@ -43,7 +43,7 @@ body {
 
 #world {
 	position: relative;
-	transition: left 0.125s, top 0.125s;
+	/*transition: left 0.125s, top 0.125s;*/
 }
 
 #ground {
