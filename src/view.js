@@ -4,6 +4,18 @@ function frame()
 	scrollToChar();
 }
 
+function setScreenSize(n, cb)
+{
+	document.body.style.setProperty("--screenSize", n + "px");
+	
+	setTimeout(() => {
+		screenSize = n;
+		screenW = screenSize;
+		screenH = screenSize;
+		cb && cb();
+	}, 1000);
+}
+
 function updateViewRange()
 {
 	for(let dy=-radius; dy<=+radius; dy++) {

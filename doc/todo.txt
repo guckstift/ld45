@@ -1,9 +1,16 @@
 TODO
 
-* make receiver gray until final
-* gfx terrain with seams
-* ani water
-* balance draft wood need
+* scroll to receiver on final
 * flood lava and final animation
+* turn tool cursor on sender station
+* bug on stepping towards edge of map
+* carrot distribution
+* draw paths as hints
+* some other hints on what to do
 
 DONE
+
+* gfx terrain with seams
+* ani water
+* make receiver gray until final
+* balance draft wood need

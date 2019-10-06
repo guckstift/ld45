@@ -1,13 +1,15 @@
+let debug = false;
+
 let rndseed = 64;
 let rndcnt = 0;
 let terras = ["grass", "soil", "stone", "sand", "water"];
 let mapSize = 64;
 let tileSize = 32;
 let radius = 1;
-let screenSize = 920;
-let screenW = screenSize + 100;
+let screenSize = 512;
+let screenW = screenSize;
 let screenH = screenSize;
-let woodForRaft = 2;
+let woodForRaft = 5;
 let diamondsFound = 0;
 let correctLasers = 0;
 
@@ -138,7 +140,7 @@ function click(e)
 {
 	let [x, y] = clientPointToCoord(e.clientX, e.clientY);
 	console.log(x, y);
-	fillContinent(x, y);
+	//fillContinent(x, y);
 }
 
 function mouseOverAdj(x, y)
@@ -312,8 +314,7 @@ function pickupItemAt(tile)
 		let type = obj.type.slice(5);
 		
 		if(type === "carrot") {
-			radius ++;
-			updateViewRange();
+			foundCarrot();
 		}
 		else {
 			addInventoryItem(type);
@@ -325,6 +326,19 @@ function pickupItemAt(tile)
 		
 		removeObjectAt(tile);
 	}, 250);
+}
+
+function foundCarrot()
+{
+	if(radius <= 8) {
+		setScreenSize(
+			screenSize + tileSize,
+			() => {
+				radius ++;
+				updateViewRange();
+			},
+		);
+	}
 }
 
 function foundDiamond()

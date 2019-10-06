@@ -1,5 +1,9 @@
 function init()
 {
+	if(debug) {
+		document.body.classList.remove("grayed");
+	}
+	
 	world.offsX = 0;
 	world.offsY = 0;
 
@@ -58,7 +62,14 @@ function init()
 	
 	fillTerraCircle(25, 28, 5, "sand");
 	
-	setChar(13, 18);
+	drawTerraLine(15, 16, 20, 16, "way");
+	
+	if(debug) {
+		setChar(13, 18);
+	}
+	else {
+		setChar(13, 18);
+	}
 	
 	//setChar(26, 26);
 	//setChar(45, 20);
@@ -76,6 +87,18 @@ function init()
 	addNewObject("item carrot", getTile(6, 15), true);
 	addNewObject("item carrot", getTile(14, 6), true);
 	addNewObject("item carrot", getTile(0, 17), true);
+	
+	[
+		[13, 28],
+		[27, 20],
+		[21, 28],
+		[12, 8],
+		[9, 31],
+		[35, 16],
+		[41, 21],
+		[34, 27],
+		[45, 24],
+	].forEach(([x, y]) => addNewObject("item carrot", getTile(x, y), true));
 	
 	addNewObject("rock", getTile(6, 14)); // close in blue diamond
 	addNewObject("rock", getTile(18, 19));
@@ -104,6 +127,33 @@ function init()
 	
 	centerToChar();
 	requestAnimationFrame(frame);
+	
+	if(debug) {
+		/*
+		foundCarrot();
+		setTimeout(() => foundCarrot(), 1010);
+		setTimeout(() => foundCarrot(), 2020);
+		radius = 15;
+		*/
+		setScreenSize(800);
+		radius = 15;
+	}
+}
+
+function changeTerraAt(x, y, terra)
+{
+	let tile = getTile(x, y);
+	tile.classList.remove(tile.terra);
+	tile.terra = terra;
+	tile.classList.add(tile.terra);
+	
+	if(terra === "water" && tile.obj) {
+		removeObjectAt(tile);
+	}
+	else if(terra === "sand" && tile.obj) {
+		removeObjectAt(tile);
+		addNewObject("sandStone", tile);
+	}
 }
 
 function fillTerraCircle(x, y, r, terra)
@@ -111,19 +161,27 @@ function fillTerraCircle(x, y, r, terra)
 	for(let dy=-r; dy<=+r; dy++) {
 		for(let dx=-r; dx<=+r; dx++) {
 			if(dx * dx + dy * dy <= r * r) {
-				let tile = getTile(x + dx, y + dy);
-				tile.classList.remove(tile.terra);
-				tile.terra = terra;
-				tile.classList.add(tile.terra);
-				
-				if(terra === "water" && tile.obj) {
-					removeObjectAt(tile);
-				}
-				else if(terra === "sand" && tile.obj) {
-					removeObjectAt(tile);
-					addNewObject("sandStone", tile);
-				}
+				changeTerraAt(x + dx, y + dy, terra);
 			}
 		}
 	}
 }
+
+function drawTerraLine(sx, sy, ex, ey, terra)
+{
+	let x = sx;
+	let y = sy;
+	
+	while(x !== ex || y !== ey) {
+		changeTerraAt(x, y, terra);
+		
+		if(ex - x > ey - y) {
+			x ++;
+		}
+		else {
+			y ++;
+		}
+	}
+}
+
+

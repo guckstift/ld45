@@ -1,21 +1,53 @@
+@keyframes water {
+	from, to {
+		background: url("../gfx/water1.png");
+	}
+	16.67% {
+		background: url("../gfx/water2.png");
+	}
+	33.33% {
+		background: url("../gfx/water3.png");
+	}
+	50% {
+		background: url("../gfx/water4.png");
+	}
+	66.67% {
+		background: url("../gfx/water3.png");
+	}
+	83.33% {
+		background: url("../gfx/water2.png");
+	}
+}
+
+.way {
+	background: url("../gfx/way.png");
+	z-index: 1;
+}
+
 .grass {
-	background: #3c0;
+	background: url("../gfx/grass.png");
+	z-index: 2;
 }
 
 .soil {
-	background: #963;
+	background: url("../gfx/soil.png");
+	z-index: 3;
 }
 
 .stone {
-	background: #999;
+	background: url("../gfx/stone.png");
+	z-index: 4;
 }
 
 .sand {
-	background: #ff9;
+	background: url("../gfx/sand.png");
+	z-index: 5;
 }
 
 .water {
-	background: #36f;
+	background: url("../gfx/water1.png");
+	animation: water 1s infinite;
+	z-index: 0;
 }
 
 
