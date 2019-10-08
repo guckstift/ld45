@@ -75,7 +75,7 @@ function smoothMix(a, b, x)
 	return a + x ** 2 * (3 - 2 * x) * (b - a);
 }
 
-function animate(obj, start, end, duration, csspx)
+function animate(obj, start, end, duration, csspx, cb)
 {
 	let startTime = performance.now();
 	requestAnimationFrame(step);
@@ -93,5 +93,9 @@ function animate(obj, start, end, duration, csspx)
 		Object.keys(start).forEach(key => {
 			obj[key] = smoothMix(start[key], end[key], d) + (csspx ? "px" : "");
 		});
+		
+		if(cb) {
+			cb();
+		}
 	}
 }

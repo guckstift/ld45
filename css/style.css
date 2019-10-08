@@ -54,6 +54,10 @@ body {
 	transition: left 0.5s, top 0.5s;
 }
 
+#world.finale {
+	transition: left 4s, top 4s;
+}
+
 #ground {
 	position: relative;
 }
@@ -157,6 +161,11 @@ body {
 	width: 32px;
 	height: 32px;
 	background-size: 32px;
+}
+
+body.finale .sprite {
+	opacity: 0 !important;
+	transition: opacity 5s;
 }
 
 .item {

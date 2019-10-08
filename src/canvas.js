@@ -109,12 +109,17 @@ function drawMap(ctx, only, without = [])
 							name += (Math.floor(waterPhase + x + y) % 4) + 1;
 						}
 						
-						ctx.globalAlpha = tile.opacity;
+						if(driftingSequence) {
+							ctx.globalAlpha = Math.max(0, 1 - drift * 0.0025);
+						}
+						else {
+							ctx.globalAlpha = tile.opacity;
+						}
 						
 						ctx.drawImage(
 							imgs[name],
-							x * tileSize - Math.floor(offsX) - 8,
-							y * tileSize - Math.floor(offsY) - 8,
+							x * tileSize - Math.floor(offsX) - 8 + (drift ? Math.random() * drift * drift * 0.00125 : 0),
+							y * tileSize - Math.floor(offsY) - 8 + (drift ? Math.random() * drift * drift * 0.00125 : 0),
 						);
 						
 						ctx.globalAlpha = 1;

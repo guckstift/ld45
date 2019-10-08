@@ -19,7 +19,10 @@ let moveLock = false;
 let continentTiles = [];
 let tilesToFill = 0;
 let continentCnt = 0;
+let finalSequence = false;
+let driftingSequence = false;
 let onraft = false;
+let drift = 0;
 
 let map = [];
 
@@ -102,12 +105,6 @@ function rotateSender(sender)
 	if(correctLasers === 3) {
 		allLasersCorrect();
 	}
-}
-
-function allLasersCorrect()
-{
-	console.log("YIPPY");
-	fillContinent(34, 36, 125)
 }
 
 function removeObjectAt(tile)
@@ -557,6 +554,44 @@ function fadeInTile(tile)
 }
 
 
+
+function allLasersCorrect()
+{
+	console.log("YIPPY");
+	
+	for(let y=0; y<mapSize; y++) {
+		for(let x=0; x<mapSize; x++) {
+			let tile = getTile(x, y);
+			
+			if(!tile.revealed) {
+				fadeInTile(tile);
+			}
+		}
+	}
+	
+	finalSequence = true;
+	world.classList.add("finale");
+	rollToTile(getTile(34, 37));
+	
+	setTimeout(() => {
+		driftingSequence = true;
+		document.body.classList.add("finale");
+	}, 4000);
+	
+	setTimeout(() => {
+		let text = document.createElement("div");
+		text.innerText = "The End";
+		text.style.position = "absolute";
+		text.style.opacity = "0";
+		text.style.left = "25%";
+		text.style.bottom = "66%";
+		text.style.color = "#fff";
+		text.style.fontSize = "88px";
+		viewport.appendChild(text);
+		animate(text.style, {opacity: 0}, {opacity: 1}, 3000, false);
+	}, 10000);
+	//fillContinent(34, 36, 125)
+}
 
 
 

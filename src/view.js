@@ -1,5 +1,9 @@
 function frame()
 {
+	if(driftingSequence) {
+		drift++;
+	}
+	
 	requestAnimationFrame(frame);
 	scrollToChar();
 }
@@ -54,20 +58,55 @@ function centerToChar()
 	updateCullRows();
 }
 
-function scrollToChar()
+function rollToTile(tile)
 {
-	let charRect = char.getBoundingClientRect();
-	let viewRect = viewport.getBoundingClientRect();
-	let delta;
-	let oldoffsY = world.offsY;
+	let startX = world.offsX;
+	let startY = world.offsY;
+	let endX = tile.x * tileSize - screenW / 2;
+	let endY = tile.y * tileSize - screenW / 2;
 	
+	world.offsX = endX;
+	world.offsY = endY;
+	world.style.left = -world.offsX + "px";
+	world.style.top = -world.offsY + "px";
+	
+	/*
+	animate(
+		world,
+		{offsX: startX, offsY: startY},
+		{offsX: endX, offsY: endY},
+		5000, false,
+		() => {
+			world.style.left = -world.offsX + "px";
+			world.style.top = -world.offsY + "px";
+		}
+	);
+	/*
+	let charRect = char.getBoundingClientRect();
 	world.offsX = char.xpx - screenW / 2;
 	world.offsY = char.ypx - screenH / 2;
 	world.style.left = -world.offsX + "px";
 	world.style.top = -world.offsY + "px";
-	
-	if(oldoffsY !== world.offsY) {
-		updateCullRows();
+	updateCullRows();
+	*/
+}
+
+function scrollToChar()
+{
+	if(!finalSequence) {
+		let charRect = char.getBoundingClientRect();
+		let viewRect = viewport.getBoundingClientRect();
+		let delta;
+		let oldoffsY = world.offsY;
+		
+		world.offsX = char.xpx - screenW / 2;
+		world.offsY = char.ypx - screenH / 2;
+		world.style.left = -world.offsX + "px";
+		world.style.top = -world.offsY + "px";
+		
+		if(oldoffsY !== world.offsY) {
+			updateCullRows();
+		}
 	}
 }
 
