@@ -7,13 +7,11 @@ function frame()
 function setScreenSize(n, cb)
 {
 	document.body.style.setProperty("--screenSize", n + "px");
-	
-	setTimeout(() => {
-		screenSize = n;
-		screenW = screenSize;
-		screenH = screenSize;
-		cb && cb();
-	}, 1000);
+	screenSize = n;
+	screenW = screenSize;
+	screenH = screenSize;
+	resizeCanvas();
+	cb && cb();
 }
 
 function updateViewRange()
@@ -22,10 +20,11 @@ function updateViewRange()
 		for(let dx=-radius; dx<=+radius; dx++) {
 			if(dx * dx + dy * dy <= radius * radius) {
 				let tile = getTile(char.x + dx, char.y + dy);
-				tile &&
-					tile.classList.remove("nodisplay");
-				setTimeout(() => tile &&
-					tile.classList.remove("invis"));
+				
+				if(tile && tile.opacity === 0) {
+					fadeInTile(tile);
+				}
+				
 				tile &&
 					tile.obj &&
 					tile.obj.classList.remove("nodisplay");
@@ -60,47 +59,22 @@ function scrollToChar()
 	let charRect = char.getBoundingClientRect();
 	let viewRect = viewport.getBoundingClientRect();
 	let delta;
-	let ymove = false;
+	let oldoffsY = world.offsY;
 	
-	let scrollRadius = Math.min(radius + 1, 7);
+	world.offsX = char.xpx - screenW / 2;
+	world.offsY = char.ypx - screenH / 2;
+	world.style.left = -world.offsX + "px";
+	world.style.top = -world.offsY + "px";
 	
-	delta = charRect.right - viewRect.right + tileSize * scrollRadius;
-	
-	if(delta > 0) {
-		world.offsX += delta;
-		world.style.left = -world.offsX + "px";
-	}
-	
-	delta = charRect.left - viewRect.left - tileSize * scrollRadius;
-	
-	if(delta < 0) {
-		world.offsX += delta;
-		world.style.left = -world.offsX + "px";
-	}
-	
-	delta = charRect.bottom - viewRect.bottom + tileSize * scrollRadius;
-	
-	if(delta > 0) {
-		world.offsY += delta;
-		world.style.top = -world.offsY + "px";
-		ymove = true;
-	}
-	
-	delta = charRect.top - viewRect.top - tileSize * scrollRadius;
-	
-	if(delta < 0) {
-		world.offsY += delta;
-		world.style.top = -world.offsY + "px";
-		ymove = true;
-	}
-	
-	if(ymove) {
+	if(oldoffsY !== world.offsY) {
 		updateCullRows();
 	}
 }
 
 function updateCullRows()
 {
+	/* probably useless now
+	
 	for(let y=0; y<mapSize; y++) {
 		let firsty = Math.floor(world.offsY / tileSize);
 		let row = getRow(y);
@@ -118,4 +92,5 @@ function updateCullRows()
 			}
 		}
 	}
+	*/
 }

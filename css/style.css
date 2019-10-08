@@ -31,6 +31,14 @@ body {
 	background: #123;
 	border-radius: 8px;
 	transition: width 1s, height 1s;
+	position: relative;
+}
+
+#canvasBG ,
+#canvas {
+	position: absolute;
+	left: 0;
+	top: 0;
 }
 
 #sidebar {
@@ -43,7 +51,7 @@ body {
 
 #world {
 	position: relative;
-	/*transition: left 0.125s, top 0.125s;*/
+	transition: left 0.5s, top 0.5s;
 }
 
 #ground {
@@ -52,13 +60,22 @@ body {
 
 
 .grayed .receiver ,
-.grayed2 .receiver ,
-.grayed3 .receiver ,
 .grayed .tile ,
-.grayed .sprite,
-.grayed .inv-item,
-.grayed #toolCursor {
+.grayed .sprite ,
+.grayed .inv-item ,
+.grayed #toolCursor ,
+.grayed2 .tile ,
+.grayed2 .laserSender ,
+.grayed2 .laserBeam ,
+.grayed2 .receiver ,
+.grayed3 .receiver {
 	filter: grayscale(1);
+}
+
+.grayed2 .water ,
+.grayed3 .tile ,
+.grayed3 #toolCursor {
+	filter: grayscale(0.75);
 }
 
 .grayed #viewport {
@@ -66,22 +83,11 @@ body {
 }
 
 
-.grayed2 .tile ,
-.grayed2 .laserSender ,
-.grayed2 .laserBeam {
-	filter: grayscale(1);
-}
 
 .grayed2 #viewport {
 	background: #222;
 }
 
-
-.grayed2 .water ,
-.grayed3 .tile ,
-.grayed3 #toolCursor {
-	filter: grayscale(0.75);
-}
 
 .grayed3 .laserSender ,
 .grayed3 .laserBeam {

@@ -1,11 +1,12 @@
 function init()
 {
+	initCanvas();
+	
 	sndTheme = document.createElement("audio");
 	sndTheme.src = "audio/theme.mp3";
 	sndTheme.setAttribute("preload", "auto");
 	sndTheme.setAttribute("controls", "none");
 	sndTheme.style.display = "none";
-	document.body.append(sndTheme);
 	
 	if(debug) {
 		document.body.classList.remove("grayed");
@@ -15,17 +16,18 @@ function init()
 	world.offsY = 0;
 
 	for(let y=0; y<mapSize; y++) {
-		let row = newElm("row nodisplay");
-		row.style.top = y * tileSize + "px";
+		let row = [];
 		
 		for(let x=0; x<mapSize; x++) {
 			let terra = randChoice(terras);
-			let tile = newElm("tile nodisplay invis " + terra);
-			tile.x = x;
-			tile.y = y;
-			tile.style.left = x * tileSize + "px";
-			tile.terra = terra;
-			row.append(tile);
+			
+			let tile = {
+				x, y, terra,
+				opacity: 0,
+				revealed: false,
+			};
+			
+			row.push(tile);
 			
 			if(tile.terra === "grass" && randInt(2) === 0) {
 				addNewObject("tree", tile);
@@ -35,7 +37,7 @@ function init()
 			}
 		}
 		
-		ground.append(row);
+		map.push(row);
 	}
 
 	for(let y=0; y<mapSize; y++) {
@@ -47,20 +49,6 @@ function init()
 			}
 		}
 	}
-	
-	//initChar();
-
-	/*
-	for(let y=0; y<mapSize; y++) {
-		for(let x=0; x<mapSize; x++) {
-			let tile = getTile(x, y);
-			
-			if(!tile.obj && randInt(128) === 0) {
-				addNewObject("item blueDiamond", tile, true);
-			}
-		}
-	}
-	*/
 	
 	fillTerraCircle(20, 10, 5, "sand");
 	fillTerraCircle(24, 11, 7, "sand");
@@ -126,22 +114,10 @@ function init()
 	
 	addNewObject("receiver", getTile(34, 37));
 	
-	/*
-	fillContinent(char.x, char.y, 0, () => {
-		placeFirstAxe();
-	});
-	*/
-	
 	centerToChar();
 	requestAnimationFrame(frame);
 	
 	if(debug) {
-		/*
-		foundCarrot();
-		setTimeout(() => foundCarrot(), 1010);
-		setTimeout(() => foundCarrot(), 2020);
-		radius = 15;
-		*/
 		setScreenSize(800);
 		radius = 15;
 	}
@@ -150,9 +126,7 @@ function init()
 function changeTerraAt(x, y, terra)
 {
 	let tile = getTile(x, y);
-	tile.classList.remove(tile.terra);
 	tile.terra = terra;
-	tile.classList.add(tile.terra);
 	
 	if(terra === "water" && tile.obj) {
 		removeObjectAt(tile);

@@ -64,3 +64,34 @@ function pointInRect(x, y, rect)
 {
 	return x >= rect.left && y >= rect.top && x < rect.right && y < rect.bottom;
 }
+
+function linearMix(a, b, x)
+{
+	return a * (1 - x) + b * x;
+}
+
+function smoothMix(a, b, x)
+{
+	return a + x ** 2 * (3 - 2 * x) * (b - a);
+}
+
+function animate(obj, start, end, duration, csspx)
+{
+	let startTime = performance.now();
+	requestAnimationFrame(step);
+	
+	function step()
+	{
+		let time = performance.now();
+		let t = time - startTime;
+		let d = Math.min(1, t / duration);
+		
+		if(t < duration) {
+			requestAnimationFrame(step);
+		}
+		
+		Object.keys(start).forEach(key => {
+			obj[key] = smoothMix(start[key], end[key], d) + (csspx ? "px" : "");
+		});
+	}
+}

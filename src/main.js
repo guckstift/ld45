@@ -21,6 +21,8 @@ let tilesToFill = 0;
 let continentCnt = 0;
 let onraft = false;
 
+let map = [];
+
 onload = init;
 onkeydown = keyDown;
 onmousemove = mouseMove;
@@ -32,7 +34,7 @@ function addNewObject(type, tile, walkable = false)
 	
 	let dispCls = "";
 	
-	if(tile.classList.contains("nodisplay")) {
+	if(!tile.revealed) {
 		dispCls = "nodisplay invis ";
 	}
 	
@@ -50,7 +52,7 @@ function addLaserSender(color, tile, rot = 0, correct = false, correctRot = 0)
 {
 	let dispCls = "";
 	
-	if(tile.classList.contains("nodisplay")) {
+	if(!tile.revealed) {
 		dispCls = "nodisplay invis ";
 	}
 	
@@ -79,8 +81,6 @@ function rotateSender(sender)
 	sender.beam.classList.remove("rotate" + sender.rot);
 	sender.rot = (sender.rot + 1) % 8;
 	sender.beam.classList.add("rotate" + sender.rot);
-	
-	//correctLasers
 	
 	if(sender.correct) {
 		if(sender.rot === sender.correctRot) {
@@ -121,6 +121,7 @@ function removeObjectAt(tile)
 function keyDown(e)
 {
 	sndTheme.play();
+	
 	if(e.key.startsWith("Arrow") || ["w", "a", "s", "d"].includes(e.key)) {
 		moveChar(e.key);
 	}
@@ -178,12 +179,13 @@ function setToolCursor(tool, x, y)
 	
 	if(tool) {
 		let tile = getTile(x, y);
-		let rect = tile.getBoundingClientRect();
+		let tileX = tile.x * tileSize - world.offsX;
+		let tileY = tile.y * tileSize - world.offsY;
 		toolCursor.type = tool.type;
 		toolCursor.tool = tool;
 		toolCursor.classList.add(tool.type);
-		toolCursor.style.left = rect.left + "px";
-		toolCursor.style.top = rect.top + "px";
+		toolCursor.style.left = tileX + "px";
+		toolCursor.style.top = tileY + "px";
 		toolCursor.style.display = "block";
 	}
 }
@@ -197,11 +199,12 @@ function setBuildCursor(type, x, y)
 	
 	if(type) {
 		let tile = getTile(x, y);
-		let rect = tile.getBoundingClientRect();
+		let tileX = tile.x * tileSize - world.offsX;
+		let tileY = tile.y * tileSize - world.offsY;
 		toolCursor.type = type;
 		toolCursor.classList.add(type);
-		toolCursor.style.left = rect.left + "px";
-		toolCursor.style.top = rect.top + "px";
+		toolCursor.style.left = tileX + "px";
+		toolCursor.style.top = tileY + "px";
 		toolCursor.style.display = "block";
 	}
 }
@@ -239,6 +242,7 @@ function buildRaft(x, y)
 	consumeItem("wood", woodForRaft);
 }
 
+/*
 function testAdjacentPoint(px, py, dx, dy)
 {
 	let tile = getTile(char.x + dx, char.y + dy);
@@ -253,6 +257,7 @@ function testAdjacentPoint(px, py, dx, dy)
 	
 	return false;
 }
+*/
 
 function initChar()
 {
@@ -280,7 +285,7 @@ function getRow(y)
 function getTile(x, y)
 {
 	if(!posOutside(x, y)) {
-		return ground.children[y].children[x];
+		return map[y][x];
 	}
 }
 
@@ -464,7 +469,7 @@ function moveChar(dir)
 			if(toolCursor.type) {
 				clickAdj(x, y);
 			}
-			else if(onraft === false && tile.obj && tile.obj.type === "raft") {
+			else if(onraft === false && tile && tile.obj && tile.obj.type === "raft") {
 				stepOnRaft(x, y);
 			}
 			else {
@@ -543,6 +548,12 @@ function placeFirstAxe()
 	let {x, y} = lastContinentTile;
 	let tile = getTile(x, y);
 	addNewObject("item axe", tile, true);
+}
+
+function fadeInTile(tile)
+{
+	tile.revealed = true;
+	animate(tile, {opacity: 0}, {opacity: 1}, 500);
 }
 
 
