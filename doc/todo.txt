@@ -1,9 +1,7 @@
 TODO
 
-* scroll to receiver on final
-* flood lava and final animation
+* flood lava for final animation
 * turn tool cursor on sender station
-* bug on stepping towards edge of map
 * draw paths as hints
 * some other hints on what to do
 
@@ -14,3 +12,5 @@ DONE
 * make receiver gray until final
 * balance draft wood need
 * carrot distribution
+* scroll to receiver on final
+* bug on stepping towards edge of map
