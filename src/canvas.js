@@ -15,6 +15,9 @@ let objs = [
 let ctx = null;
 let imgsToLoad = 0;
 let imgs = {};
+let imgsGray100 = {};
+let imgsGray75 = {};
+let imgsGray66 = {};
 let waterPhase = 0;
 
 srcs.forEach(name => imgs[name] = loadImg(`gfx/${name}.png`, imgLoaded));
@@ -37,31 +40,8 @@ function render()
 {
 	requestAnimationFrame(render);
 	
-	if(diamondsFound === 0) {
-		ctx.clearRect(0, 0, canvas.width, canvas.height);
-		drawMap(ctx);
-		grayScale(ctx, 1, true);
-	}
-	else if(diamondsFound === 1) {
-		ctxBG.clearRect(0, 0, canvas.width, canvas.height);
-		drawMap(ctxBG, ["water"]);
-		grayScale(ctxBG, 0.75, true);
-		ctx.clearRect(0, 0, canvas.width, canvas.height);
-		drawMap(ctx, null, ["water"]);
-		grayScale(ctx, 1, true);
-	}
-	else if(diamondsFound === 2) {
-		ctxBG.clearRect(0, 0, canvas.width, canvas.height);
-		ctx.clearRect(0, 0, canvas.width, canvas.height);
-		drawMap(ctx);
-		grayScale(ctx, 0.66, true);
-	}
-	else if(diamondsFound >= 3) {
-		ctxBG.clearRect(0, 0, canvas.width, canvas.height);
-		ctx.clearRect(0, 0, canvas.width, canvas.height);
-		drawMap(ctx);
-	}
-	
+	ctx.clearRect(0, 0, canvas.width, canvas.height);
+	drawMap(ctx);
 	waterPhase = (waterPhase + 0.125) % 4;
 }
 
@@ -116,10 +96,29 @@ function drawMap(ctx, only, without = [])
 							ctx.globalAlpha = tile.opacity;
 						}
 						
+						let img = imgs[name];
+						
+						if(diamondsFound === 0) {
+							img = imgsGray100[name];
+						}
+						else if(diamondsFound === 1) {
+							if(terra === "water") {
+								img = imgsGray75[name];
+							}
+							else {
+								img = imgsGray100[name];
+							}
+						}
+						else if(diamondsFound === 2) {
+							img = imgsGray66[name];
+						}
+						
 						ctx.drawImage(
-							imgs[name],
-							x * tileSize - Math.floor(offsX) - 8 + (drift ? Math.random() * drift * drift * 0.00125 : 0),
-							y * tileSize - Math.floor(offsY) - 8 + (drift ? Math.random() * drift * drift * 0.00125 : 0),
+							img,
+							x * tileSize - Math.floor(offsX) - 8
+								+ (drift ? Math.random() * drift * drift * 0.00125 : 0),
+							y * tileSize - Math.floor(offsY) - 8
+								+ (drift ? Math.random() * drift * drift * 0.00125 : 0),
 						);
 						
 						ctx.globalAlpha = 1;
@@ -142,4 +141,29 @@ function loadImg(src, cb)
 function imgLoaded()
 {
 	imgsToLoad--;
+	
+	if(imgsToLoad === 0) {
+		createGrayTiles();
+	}
+}
+
+function createGrayTiles()
+{
+	srcs.forEach(src => {
+		let img = imgs[src];
+		let canv100 = imgsGray100[src] = document.createElement("canvas");
+		let canv75  = imgsGray75[src]  = document.createElement("canvas");
+		let canv66  = imgsGray66[src]  = document.createElement("canvas");
+		canv100.width  = canv75.width  = canv66.width  = img.width;
+		canv100.height = canv75.height = canv66.height = img.height;
+		let ctx100 = canv100.getContext("2d");
+		let ctx75 = canv75.getContext("2d");
+		let ctx66 = canv66.getContext("2d");
+		ctx100.drawImage(img, 0, 0);
+		grayScale(ctx100, 1, true);
+		ctx75.drawImage(img, 0, 0);
+		grayScale(ctx75, 0.75, true);
+		ctx66.drawImage(img, 0, 0);
+		grayScale(ctx66, 0.66, true);
+	});
 }

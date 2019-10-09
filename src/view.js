@@ -25,7 +25,7 @@ function updateViewRange()
 			if(dx * dx + dy * dy <= radius * radius) {
 				let tile = getTile(char.x + dx, char.y + dy);
 				
-				if(tile && tile.opacity === 0) {
+				if(tile && !tile.revealed) {
 					fadeInTile(tile);
 				}
 				
