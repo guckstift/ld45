@@ -1,0 +1,203 @@
+@keyframes water {
+	from, to {
+		background: url("../gfx/water1.png");
+	}
+	16.67% {
+		background: url("../gfx/water2.png");
+	}
+	33.33% {
+		background: url("../gfx/water3.png");
+	}
+	50% {
+		background: url("../gfx/water4.png");
+	}
+	66.67% {
+		background: url("../gfx/water3.png");
+	}
+	83.33% {
+		background: url("../gfx/water2.png");
+	}
+}
+
+.way {
+	background: url("../gfx/way.png");
+	z-index: 1;
+}
+
+.grass {
+	background: url("../gfx/grass.png");
+	z-index: 2;
+}
+
+.soil {
+	background: url("../gfx/soil.png");
+	z-index: 3;
+}
+
+.stone {
+	background: url("../gfx/stone.png");
+	z-index: 4;
+}
+
+.sand {
+	background: url("../gfx/sand.png");
+	z-index: 5;
+}
+
+.water {
+	background: url("../gfx/water1.png");
+	animation: water 1s infinite;
+	z-index: 0;
+}
+
+
+#char {
+	background: url("../gfx/char.png");
+	width: 32px;
+	height: 64px;
+	margin-top: -32px;
+}
+
+#char.onraft {
+	background: url("../gfx/char-onraft.png");
+}
+
+.tree ,
+.rock ,
+.mossRock ,
+.sandStone {
+	width: 32px;
+	height: 48px;
+	margin-top: -16px;
+}
+
+.laserSender ,
+.receiver {
+	width: 32px;
+	height: 64px;
+	margin-top: -32px;
+}
+
+.laserSender.red {
+	background: url("../gfx/laser-sender-red.png");
+}
+
+.laserSender.green {
+	background: url("../gfx/laser-sender-green.png");
+}
+
+.laserSender.blue {
+	background: url("../gfx/laser-sender-blue.png");
+}
+
+.laserBeam {
+	position: absolute;
+	width: 2048px;
+	height: 4px;
+	z-index: 99999 !important;
+	margin-left: 16px;
+	margin-top: -16px;
+	transform-origin: 0% 50%;
+}
+
+.laserBeam.red {
+	background: linear-gradient(90deg, rgba(255,51,51,1) 0%, rgba(255,51,51,0) 100%);
+}
+
+.laserBeam.green {
+	background: linear-gradient(90deg, rgba(51,255,51,1) 0%, rgba(51,255,51,0) 100%);
+}
+
+.laserBeam.blue {
+	background: linear-gradient(90deg, rgba(51,153,255,1) 0%, rgba(51,153,255,0) 100%);
+}
+
+.laserBeam.red.correct.rotate3 {
+	background: #f33;
+	width: 630px;
+}
+
+.laserBeam.green.correct.rotate6 {
+	background: #3f3;
+	width: 250px;
+}
+
+.laserBeam.blue.correct.rotate1 {
+	background: #39f;
+	width: 400px;
+}
+
+.laserBeam.green.rotate3:not(.correct) {
+	background: #3f3;
+	width: 265px;
+}
+
+.laserBeam.blue.rotate6:not(.correct) {
+	background: #39f;
+	width: 93px;
+}
+
+.laserBeam.red.rotate1:not(.correct) {
+	background: #f33;
+	width: 580px;
+}
+
+.receiver {
+	background: url("../gfx/receiver.png");
+}
+
+.tree {
+	background: url("../gfx/tree.png");
+}
+
+.rock {
+	background: url("../gfx/rock.png");
+}
+
+.mossRock {
+	background: url("../gfx/moss-rock.png");
+}
+
+.sandStone {
+	background: url("../gfx/sand-stone.png");
+}
+
+.redDiamond {
+	background: url("../gfx/red-diamond.png");
+}
+
+.blueDiamond {
+	background: url("../gfx/blue-diamond.png");
+}
+
+.greenDiamond {
+	background: url("../gfx/green-diamond.png");
+}
+
+.axe {
+	background-image: url("../gfx/axe.png");
+}
+
+.pickaxe {
+	background-image: url("../gfx/pickaxe.png");
+}
+
+.raft {
+	background-image: url("../gfx/raft.png");
+}
+
+.wood {
+	background-image: url("../gfx/wood.png");
+}
+
+.brick {
+	background-image: url("../gfx/brick.png");
+}
+
+.sandBrick {
+	background-image: url("../gfx/sand-brick.png");
+}
+
+.carrot {
+	background-image: url("../gfx/carrot.png");
+}

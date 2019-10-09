@@ -1,0 +1,220 @@
+@keyframes pulse {
+	from {
+		transform: scale(0.75);
+	}
+	50% {
+		transform: scale(1.5);
+	}
+	to {
+		transform: scale(0.75);
+	}
+}
+
+body {
+	background: black;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	height: 100vh;
+	margin: 0;
+	image-rendering: pixelated;
+	
+	--screenSize: 512px;
+	--screenW: var(--screenSize);
+	--screenH: var(--screenSize);
+}
+
+#viewport {
+	width: var(--screenW);
+	height: var(--screenH);
+	overflow: hidden;
+	background: #123;
+	border-radius: 8px;
+	transition: width 1s, height 1s;
+	position: relative;
+}
+
+#canvasBG ,
+#canvas {
+	position: absolute;
+	left: 0;
+	top: 0;
+}
+
+#sidebar {
+	flex: none;
+	width: 64px;
+    height: var(--screenH);
+    padding: 0 16px;
+	position: relative;
+}
+
+#world {
+	position: relative;
+	transition: left 0.5s, top 0.5s;
+}
+
+#world.finale {
+	transition: left 4s, top 4s;
+}
+
+#ground {
+	position: relative;
+}
+
+
+.grayed .receiver ,
+.grayed .tile ,
+.grayed .sprite ,
+.grayed .inv-item ,
+.grayed #toolCursor ,
+.grayed2 .tile ,
+.grayed2 .laserSender ,
+.grayed2 .laserBeam ,
+.grayed2 .receiver ,
+.grayed3 .receiver {
+	filter: grayscale(1);
+}
+
+.grayed2 .water ,
+.grayed3 .tile ,
+.grayed3 #toolCursor {
+	filter: grayscale(0.75);
+}
+
+.grayed #viewport {
+	background: #222;
+}
+
+
+
+.grayed2 #viewport {
+	background: #222;
+}
+
+
+.grayed3 .laserSender ,
+.grayed3 .laserBeam {
+	filter: grayscale(1);
+}
+
+.grayed3 #viewport {
+	background: #222;
+}
+
+
+.grayed .redDiamond ,
+.grayed .greenDiamond ,
+.grayed .blueDiamond {
+	filter: grayscale(0);
+}
+
+.rotate0 {
+	transform: rotate(0deg);
+}
+.rotate1 {
+	transform: rotate(45deg);
+}
+.rotate2 {
+	transform: rotate(90deg);
+}
+.rotate3 {
+	transform: rotate(135deg);
+}
+.rotate4 {
+	transform: rotate(180deg);
+}
+.rotate5 {
+	transform: rotate(225deg);
+}
+.rotate6 {
+	transform: rotate(270deg);
+}
+.rotate7 {
+	transform: rotate(315deg);
+}
+
+
+.row {
+	position: absolute;
+	left: 0;
+}
+
+.tile  {
+	position: absolute;
+	top: 0;
+	width: 48px;
+	height: 48px;
+	margin-left: -8px;
+	margin-top: -8px;
+	opacity: 1;
+	transition: opacity 0.5s;
+}
+
+.sprite {
+	position: absolute;
+	opacity: 1;
+	transition:
+		opacity 0.5s,
+		left 0.5s,
+		top 0.5s;
+	width: 32px;
+	height: 32px;
+	background-size: 32px;
+}
+
+body.finale .sprite {
+	opacity: 0 !important;
+	transition: opacity 5s;
+}
+
+.item {
+	transition: all 0.25s linear;
+}
+
+.nodisplay {
+	display: none;
+}
+
+.invis {
+	opacity: 0;
+}
+
+.picking-up {
+	transform: scale(4);
+	z-index: 99999 !important;
+}
+
+.inv-item {
+	width: 64px !important;
+	height: 64px !important;
+	background-size: 64px !important;
+	position: relative;
+}
+
+.item-count {
+	position: absolute;
+	right: 0;
+	bottom: 0;
+	color: white;
+}
+
+.durability {
+	position: absolute;
+	right: 0;
+	bottom: 0;
+	height: 4px;
+	width: 100%;
+	background: #0f0;
+}
+
+#toolCursor {
+	position: absolute;
+	width: 32px;
+	height: 32px;
+	left: 0;
+	top: 0;
+	display: none;
+	z-index: 9999;
+	animation: pulse 1s infinite;
+}
