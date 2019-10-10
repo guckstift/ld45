@@ -1,5 +1,6 @@
 function init()
 {
+	sidebar = document.getElementById("sidebar");
 	initCanvas();
 	
 	sndTheme = document.createElement("audio");

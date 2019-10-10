@@ -23,6 +23,7 @@ let finalSequence = false;
 let driftingSequence = false;
 let onraft = false;
 let drift = 0;
+let sidebar = null;
 
 let map = [];
 
@@ -117,8 +118,6 @@ function removeObjectAt(tile)
 
 function keyDown(e)
 {
-	sndTheme.play();
-	
 	if(e.key.startsWith("Arrow") || ["w", "a", "s", "d"].includes(e.key)) {
 		moveChar(e.key);
 	}
@@ -429,6 +428,8 @@ function walkable(tile)
 
 function moveChar(dir)
 {
+	sndTheme.play();
+	
 	if(moveLock) {
 		return;
 	}

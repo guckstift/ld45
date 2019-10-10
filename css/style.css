@@ -218,3 +218,35 @@ body.finale .sprite {
 	z-index: 9999;
 	animation: pulse 1s infinite;
 }
+
+#leftBtn , #rightBtn , #upBtn , #downBtn {
+	position: absolute;
+	width: 33%;
+	height: 33%;
+	opacity: 0;
+	touch-action: manipulation;
+}
+
+#leftBtn {
+	left: 0;
+	top: 50%;
+	transform: translate(0, -50%);
+}
+
+#rightBtn {
+	right: 0;
+	top: 50%;
+	transform: translate(0, -50%);
+}
+
+#upBtn {
+	left: 50%;
+	top: 0;
+	transform: translate(-50%, 0);
+}
+
+#downBtn {
+	left: 50%;
+	bottom: 0;
+	transform: translate(-50%, 0);
+}

@@ -1,4 +1,5 @@
 let debug = false;
+let sidebar = null;
 
 let sndTheme = null;
 

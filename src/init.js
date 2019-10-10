@@ -1,5 +1,6 @@
 function init()
 {
+	sidebar = document.getElementById("sidebar");
 	initCanvas();
 	
 	sndTheme = document.createElement("audio");
@@ -121,6 +122,28 @@ function init()
 		setScreenSize(800);
 		radius = 15;
 	}
+	
+	leftBtn.onclick = e => {
+		moveChar("ArrowLeft");
+		e.preventDefault();
+	};
+	
+	rightBtn.onclick = e => {
+		moveChar("ArrowRight");
+		e.preventDefault();
+	};
+	
+	rightBtn.dblclick = e => {e.preventDefault();};
+	
+	upBtn.onclick = e => {
+		moveChar("ArrowUp");
+		e.preventDefault();
+	};
+	
+	downBtn.onclick = e => {
+		moveChar("ArrowDown");
+		e.preventDefault();
+	};
 }
 
 function changeTerraAt(x, y, terra)
