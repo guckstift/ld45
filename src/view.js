@@ -3,7 +3,7 @@ function frame()
 	if(driftingSequence) {
 		drift++;
 	}
-	
+
 	requestAnimationFrame(frame);
 	scrollToChar();
 }
@@ -24,11 +24,11 @@ function updateViewRange()
 		for(let dx=-radius; dx<=+radius; dx++) {
 			if(dx * dx + dy * dy <= radius * radius) {
 				let tile = getTile(char.x + dx, char.y + dy);
-				
+
 				if(tile && !tile.revealed) {
 					fadeInTile(tile);
 				}
-				
+
 				tile &&
 					tile.obj &&
 					tile.obj.classList.remove("nodisplay");
@@ -64,12 +64,12 @@ function rollToTile(tile)
 	let startY = world.offsY;
 	let endX = tile.x * tileSize - screenW / 2;
 	let endY = tile.y * tileSize - screenW / 2;
-	
+
 	world.offsX = endX;
 	world.offsY = endY;
 	world.style.left = -world.offsX + "px";
 	world.style.top = -world.offsY + "px";
-	
+
 	/*
 	animate(
 		world,
@@ -95,15 +95,15 @@ function scrollToChar()
 {
 	if(!finalSequence) {
 		let charRect = char.getBoundingClientRect();
-		let viewRect = viewport.getBoundingClientRect();
+		let viewRect = document.getElementById("viewport").getBoundingClientRect();
 		let delta;
 		let oldoffsY = world.offsY;
-		
+
 		world.offsX = char.xpx - screenW / 2;
 		world.offsY = char.ypx - screenH / 2;
 		world.style.left = -world.offsX + "px";
 		world.style.top = -world.offsY + "px";
-		
+
 		if(oldoffsY !== world.offsY) {
 			updateCullRows();
 		}
@@ -113,11 +113,11 @@ function scrollToChar()
 function updateCullRows()
 {
 	/* probably useless now
-	
+
 	for(let y=0; y<mapSize; y++) {
 		let firsty = Math.floor(world.offsY / tileSize);
 		let row = getRow(y);
-		
+
 		if(row) {
 			if(y >= firsty && y <= firsty + Math.ceil(screenH / tileSize)) {
 				if(row.classList.contains("nodisplay")) {

@@ -35,57 +35,57 @@ onclick = click;
 function addNewObject(type, tile, walkable = false)
 {
 	removeObjectAt(tile);
-	
+
 	let dispCls = "";
-	
+
 	if(!tile.revealed) {
 		dispCls = "nodisplay invis ";
 	}
-	
+
 	let obj = newElm("sprite " + dispCls + type);
 	obj.type = type;
 	obj.walkable = walkable;
 	tile.obj = obj;
 	setSpritePos(obj, tile.x, tile.y);
 	world.append(obj);
-	
+
 	return obj;
 }
 
 function addLaserSender(color, tile, rot = 0, correct = false, correctRot = 0)
 {
 	let dispCls = "";
-	
+
 	if(!tile.revealed) {
 		dispCls = "nodisplay invis ";
 	}
-	
+
 	let sender = addNewObject("laserSender", tile);
 	sender.classList.add(color);
-	
+
 	let beam = newElm(
 		"sprite " + dispCls + "laserBeam " + color + " rotate" + rot +
 		(correct ? " correct" : "")
 	);
-	
+
 	sender.beam = beam;
 	sender.rot = rot;
 	sender.correct = correct;
 	sender.correctRot = correctRot;
 	setSpritePos(beam, tile.x, tile.y);
 	world.append(beam);
-	
+
 	return sender;
 }
 
 function rotateSender(sender)
 {
 	let wasCorrect = sender.rot === sender.correctRot;
-	
+
 	sender.beam.classList.remove("rotate" + sender.rot);
 	sender.rot = (sender.rot + 1) % 8;
 	sender.beam.classList.add("rotate" + sender.rot);
-	
+
 	if(sender.correct) {
 		if(sender.rot === sender.correctRot) {
 			correctLasers ++;
@@ -102,7 +102,7 @@ function rotateSender(sender)
 			correctLasers ++;
 		}
 	}
-	
+
 	if(correctLasers === 3) {
 		allLasersCorrect();
 	}
@@ -130,7 +130,7 @@ function mouseMove(e)
 
 function clientPointToCoord(x, y)
 {
-	let rect = viewport.getBoundingClientRect();
+	let rect = document.getElementById("viewport").getBoundingClientRect();
 	x = Math.floor((x - rect.left + world.offsX) / tileSize);
 	y = Math.floor((y - rect.top + world.offsY) / tileSize);
 	return [x, y];
@@ -146,10 +146,10 @@ function click(e)
 function mouseOverAdj(x, y)
 {
 	let tile = getTile(x, y);
-	
+
 	if(tile.obj) {
 		let tool = getToolFor(tile.obj.type);
-		
+
 		if(tool) {
 			setToolCursor(tool, x, y);
 		}
@@ -159,7 +159,7 @@ function mouseOverAdj(x, y)
 	}
 	else if(tile.terra === "water") {
 		let wood = getItemOf("wood");
-		
+
 		if(wood && wood.count >= woodForRaft) {
 			setBuildCursor("raft", x, y);
 		}
@@ -172,7 +172,7 @@ function setToolCursor(tool, x, y)
 	toolCursor.style.display = "";
 	toolCursor.type = null;
 	toolCursor.tool = null;
-	
+
 	if(tool) {
 		let tile = getTile(x, y);
 		let tileX = tile.x * tileSize - world.offsX;
@@ -192,7 +192,7 @@ function setBuildCursor(type, x, y)
 	toolCursor.style.display = "";
 	toolCursor.type = null;
 	toolCursor.tool = null;
-	
+
 	if(type) {
 		let tile = getTile(x, y);
 		let tileX = tile.x * tileSize - world.offsX;
@@ -208,10 +208,10 @@ function setBuildCursor(type, x, y)
 function clickAdj(x, y)
 {
 	let tile = getTile(x, y);
-	
+
 	if(tile.obj) {
 		let tool = getToolFor(tile.obj.type);
-		
+
 		if(tool) {
 			useTool(tool, tile);
 			setToolCursor();
@@ -223,11 +223,11 @@ function clickAdj(x, y)
 	}
 	else if(tile.terra === "water") {
 		let wood = getItemOf("wood");
-		
+
 		if(wood && wood.count >= woodForRaft) {
 			buildRaft(x, y);
 		}
-		
+
 		setToolCursor();
 	}
 }
@@ -242,15 +242,15 @@ function buildRaft(x, y)
 function testAdjacentPoint(px, py, dx, dy)
 {
 	let tile = getTile(char.x + dx, char.y + dy);
-	
+
 	if(tile) {
 		let rect = tile.getBoundingClientRect();
-		
+
 		if(pointInRect(px, py, rect)) {
 			return true;
 		}
 	}
-	
+
 	return false;
 }
 */
@@ -261,13 +261,13 @@ function initChar()
 		let x = randInt(mapSize);
 		let y = randInt(mapSize);
 		let tile = getTile(x, y);
-		
+
 		if(walkable(tile)) {
 			setChar(x, y);
 			return;
 		}
 	}
-	
+
 	throw "Could not place character";
 }
 
@@ -299,13 +299,13 @@ function setSpritePos(sprite, x, y)
 function setChar(x, y)
 {
 	setSpritePos(char, x, y);
-	
+
 	let tile = getTile(x, y);
-	
+
 	if(tile && tile.obj && tile.obj.classList.contains("item")) {
 		pickupItemAt(tile);
 	}
-	
+
 	updateViewRange();
 }
 
@@ -313,21 +313,21 @@ function pickupItemAt(tile)
 {
 	let obj = tile.obj;
 	obj.classList.add("picking-up");
-	
+
 	setTimeout(() => {
 		let type = obj.type.slice(5);
-		
+
 		if(type === "carrot") {
 			foundCarrot();
 		}
 		else {
 			addInventoryItem(type);
-			
+
 			if(type === "redDiamond" || type === "greenDiamond" || type === "blueDiamond") {
 				foundDiamond();
 			}
 		}
-		
+
 		removeObjectAt(tile);
 	}, 250);
 }
@@ -348,7 +348,7 @@ function foundCarrot()
 function foundDiamond()
 {
 	diamondsFound ++;
-	
+
 	if(diamondsFound === 1) {
 		document.body.classList.remove("grayed");
 		document.body.classList.add("grayed2");
@@ -390,7 +390,7 @@ function useTool(tool, tile)
 	let rel = dur.val / dur.maxval;
 	dur.style.width = rel * 100 + "%";
 	dur.style.background = hexColor(1 - rel, rel, 0);
-	
+
 	if(tool.type === "axe" && tile.obj.type === "tree") {
 		cutTree(tile);
 	}
@@ -402,7 +402,7 @@ function useTool(tool, tile)
 	else if(tool.type === "pickaxe" && tile.obj.type === "sandStone") {
 		pickSandStone(tile);
 	}
-	
+
 	if(rel <= 0) {
 		tool.remove();
 	}
@@ -418,25 +418,25 @@ function walkable(tile)
 	if(!tile || tile.terra === "water") {
 		return false;
 	}
-	
+
 	if(tile.obj && tile.obj.walkable === false) {
 		return false;
 	}
-	
+
 	return true;
 }
 
 function moveChar(dir)
 {
 	sndTheme.play();
-	
+
 	if(moveLock) {
 		return;
 	}
-	
+
 	let x = char.x;
 	let y = char.y;
-	
+
 	if(dir === "ArrowLeft" || dir === "a") {
 		x --;
 	}
@@ -449,12 +449,12 @@ function moveChar(dir)
 	else if(dir === "ArrowDown" || dir === "s") {
 		y ++;
 	}
-	
+
 	let tile = getTile(x, y);
-	
+
 	if(onraft) {
 		setToolCursor();
-		
+
 		if(tile.terra === "water") {
 			setChar(x, y);
 		}
@@ -476,13 +476,13 @@ function moveChar(dir)
 		}
 		else {
 			setToolCursor();
-			
+
 			if(tile.terra !== "water") {
 				setChar(x, y);
 			}
 		}
 	}
-	
+
 	moveLock = true;
 	setTimeout(() => moveLock = false, 10);//125);
 }
@@ -508,11 +508,11 @@ function stepOffRaft(x, y, oldx, oldy)
 function fillContinent(x = char.x, y = char.y, interval = 0, cb = null, root = true)
 {
 	let tile = getTile(x, y);
-	
+
 	if(root) {
 		continentCnt++;
 	}
-		
+
 	if(walkable(tile) && !tile.continent) {
 		tile.continent = continentCnt;
 		tile.style.background = hexColor(
@@ -523,7 +523,7 @@ function fillContinent(x = char.x, y = char.y, interval = 0, cb = null, root = t
 		continentTiles.push({x, y});
 		lastContinentTile = {x, y};
 		tilesToFill += 4;
-		
+
 		setTimeout(() => {
 			fillContinent(x - 1, y, interval, cb, false);
 			tilesToFill --;
@@ -535,7 +535,7 @@ function fillContinent(x = char.x, y = char.y, interval = 0, cb = null, root = t
 			tilesToFill --;
 		}, interval);
 	}
-	
+
 	if(cb && tilesToFill === 1) {
 		cb();
 	}
@@ -559,26 +559,26 @@ function fadeInTile(tile)
 function allLasersCorrect()
 {
 	console.log("YIPPY");
-	
+
 	for(let y=0; y<mapSize; y++) {
 		for(let x=0; x<mapSize; x++) {
 			let tile = getTile(x, y);
-			
+
 			if(!tile.revealed) {
 				fadeInTile(tile);
 			}
 		}
 	}
-	
+
 	finalSequence = true;
 	world.classList.add("finale");
 	rollToTile(getTile(34, 37));
-	
+
 	setTimeout(() => {
 		driftingSequence = true;
 		document.body.classList.add("finale");
 	}, 4000);
-	
+
 	setTimeout(() => {
 		let text = document.createElement("div");
 		text.innerText = "The End";
@@ -593,7 +593,3 @@ function allLasersCorrect()
 	}, 10000);
 	//fillContinent(34, 36, 125)
 }
-
-
-
-

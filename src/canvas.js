@@ -39,7 +39,7 @@ function resizeCanvas()
 function render()
 {
 	requestAnimationFrame(render);
-	
+
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
 	drawMap(ctx);
 	waterPhase = (waterPhase + 0.125) % 4;
@@ -49,24 +49,24 @@ function grayScale(ctx, amp, putback = false)
 {
 	let imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
 	let pixels = imgData.data;
-	
+
 	for(let i = 0; i < pixels.length; i += 4) {
 		let value = (pixels[i] + pixels[i + 1] + pixels[i + 2]) * 0.3333333333333333333;
 		pixels[i + 0] = linearMix(pixels[i + 0], value, amp);
 		pixels[i + 1] = linearMix(pixels[i + 1], value, amp);
 		pixels[i + 2] = linearMix(pixels[i + 2], value, amp);
 	}
-	
+
 	if(putback) {
 		ctx.putImageData(imgData, 0, 0);
 	}
-	
+
 	return imgData;
 }
 
 function drawMap(ctx, only, without = [])
 {
-	let viewRect = viewport.getBoundingClientRect();
+	let viewRect = document.getElementById("viewport").getBoundingClientRect();
 	let worldRect = world.getBoundingClientRect();
 	let offsX = -worldRect.left + viewRect.left;
 	let offsY = -worldRect.top + viewRect.top;
@@ -75,29 +75,29 @@ function drawMap(ctx, only, without = [])
 	let firstY = Math.floor(offsY / tileSize);
 	let lastY = firstY + Math.ceil(canvas.height / tileSize);
 	let terraList = only ? only : terraOrder;
-	
+
 	terraList.forEach(terra => {
 		if(!without.includes(terra)) {
 			for(let y = firstY; y <= lastY; y++) {
 				for(let x = firstX; x <= lastX; x++) {
 					let tile = getTile(x, y);
-					
+
 					if(tile && tile.terra === terra && tile.opacity) {
 						let name = terra;
-						
+
 						if(terra === "water") {
 							name += (Math.floor(waterPhase + x + y) % 4) + 1;
 						}
-						
+
 						if(driftingSequence) {
 							ctx.globalAlpha = Math.max(0, 1 - drift * 0.0025);
 						}
 						else {
 							ctx.globalAlpha = tile.opacity;
 						}
-						
+
 						let img = imgs[name];
-						
+
 						if(diamondsFound === 0) {
 							img = imgsGray100[name];
 						}
@@ -112,7 +112,7 @@ function drawMap(ctx, only, without = [])
 						else if(diamondsFound === 2) {
 							img = imgsGray66[name];
 						}
-						
+
 						ctx.drawImage(
 							img,
 							x * tileSize - Math.floor(offsX) - 8
@@ -120,7 +120,7 @@ function drawMap(ctx, only, without = [])
 							y * tileSize - Math.floor(offsY) - 8
 								+ (drift ? Math.random() * drift * drift * 0.00125 : 0),
 						);
-						
+
 						ctx.globalAlpha = 1;
 					}
 				}
@@ -141,7 +141,7 @@ function loadImg(src, cb)
 function imgLoaded()
 {
 	imgsToLoad--;
-	
+
 	if(imgsToLoad === 0) {
 		createGrayTiles();
 	}
